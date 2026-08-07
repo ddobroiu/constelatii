@@ -10,6 +10,7 @@ function makeFigure(id: string, x: number, y: number, rotation: number): Figure 
     position: { x, y },
     rotation,
     color: "indigo",
+    shape: "cerc",
     isPrimaryUser: false,
   };
 }

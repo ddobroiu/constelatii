@@ -1,12 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { nanoid } from "nanoid";
 import Starfield from "@/components/Starfield";
 import FigurePalette from "@/components/board/FigurePalette";
-import { DEFAULT_FIGURE_COLOR, roleLabel, type BoardConfig, type FigureColor, type FigureRole } from "@/lib/board/types";
+import {
+  DEFAULT_FIGURE_COLOR,
+  DEFAULT_FIGURE_SHAPE,
+  roleLabel,
+  type BoardConfig,
+  type Figure,
+  type FigureColor,
+  type FigureRole,
+  type FigureShape,
+} from "@/lib/board/types";
 import { nextFigurePosition } from "@/lib/board/geometry";
+import { focusRelationshipLabel, type QuestionnaireAnswers } from "@/lib/questionnaire/schema";
+import { loadQuestionnaireAnswers } from "@/lib/session/clientStore";
 
 const BoardCanvas = dynamic(() => import("@/components/board/BoardCanvas"), { ssr: false });
 
@@ -16,30 +27,42 @@ function initialBoardConfig(): BoardConfig {
   return { figures: [], relationships: [], canvasSize: CANVAS_SIZE };
 }
 
+function makeFigure(role: FigureRole, position: { x: number; y: number }): Figure {
+  return {
+    id: nanoid(),
+    role,
+    label: roleLabel(role),
+    position,
+    rotation: 0,
+    color: DEFAULT_FIGURE_COLOR,
+    shape: DEFAULT_FIGURE_SHAPE,
+    isPrimaryUser: role === "eu",
+  };
+}
+
 export default function HartaPage() {
   const [boardConfig, setBoardConfig] = useState<BoardConfig>(initialBoardConfig);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireAnswers | null>(null);
+
+  // Seed the board from the questionnaire's chosen figures, once, on first load.
+  useEffect(() => {
+    const answers = loadQuestionnaireAnswers();
+    if (!answers) return;
+    setQuestionnaire(answers);
+    setBoardConfig((prev) => {
+      if (prev.figures.length > 0) return prev;
+      const figures = answers.selectedFigures.map((role, i) => makeFigure(role, nextFigurePosition(i)));
+      return { ...prev, figures };
+    });
+  }, []);
 
   const selectedFigure = boardConfig.figures.find((f) => f.id === selectedId) ?? null;
 
   function addFigure(role: FigureRole) {
-    const id = nanoid();
-    setBoardConfig((prev) => ({
-      ...prev,
-      figures: [
-        ...prev.figures,
-        {
-          id,
-          role,
-          label: roleLabel(role),
-          position: nextFigurePosition(prev.figures.length),
-          rotation: 0,
-          color: DEFAULT_FIGURE_COLOR,
-          isPrimaryUser: role === "eu",
-        },
-      ],
-    }));
-    setSelectedId(id);
+    const figure = makeFigure(role, nextFigurePosition(boardConfig.figures.length));
+    setBoardConfig((prev) => ({ ...prev, figures: [...prev.figures, figure] }));
+    setSelectedId(figure.id);
   }
 
   function updateFigure(id: string, patch: { x?: number; y?: number; rotation?: number }) {
@@ -74,6 +97,13 @@ export default function HartaPage() {
     }));
   }
 
+  function reshapeFigure(id: string, shape: FigureShape) {
+    setBoardConfig((prev) => ({
+      ...prev,
+      figures: prev.figures.map((f) => (f.id === id ? { ...f, shape } : f)),
+    }));
+  }
+
   function removeFigure(id: string) {
     setBoardConfig((prev) => ({
       ...prev,
@@ -90,8 +120,9 @@ export default function HartaPage() {
       <div className="relative z-10 flex max-w-3xl flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-semibold sm:text-3xl">Așază-ți constelația</h1>
         <p className="max-w-xl text-sm text-foreground/60">
-          Adaugă figurile relevante pentru situația ta, poziționează-le pe tablă și setează-le
-          direcția.
+          {questionnaire
+            ? `Ai ales să explorezi: ${focusRelationshipLabel(questionnaire.focusRelationship)}. Poziționează figurile pe tablă și setează-le direcția.`
+            : "Adaugă figurile relevante pentru situația ta, poziționează-le pe tablă și setează-le direcția."}
         </p>
       </div>
 
@@ -108,6 +139,7 @@ export default function HartaPage() {
           onAdd={addFigure}
           onRelabel={relabelFigure}
           onRecolor={recolorFigure}
+          onReshape={reshapeFigure}
           onRemove={removeFigure}
         />
       </div>

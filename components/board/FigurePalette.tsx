@@ -1,6 +1,23 @@
 "use client";
 
-import { FIGURE_COLORS, FIGURE_ROLES, type Figure, type FigureColor, type FigureRole } from "@/lib/board/types";
+import {
+  FIGURE_COLORS,
+  FIGURE_ROLES,
+  FIGURE_SHAPES,
+  type Figure,
+  type FigureColor,
+  type FigureRole,
+  type FigureShape,
+} from "@/lib/board/types";
+
+const SHAPE_ICON_PATHS: Record<FigureShape, string> = {
+  cerc: "M10 2a8 8 0 1 0 0.001 0Z",
+  patrat: "M3 3h14v14H3Z",
+  triunghi: "M10 2 18 17H2Z",
+  romb: "M10 1 19 10 10 19 1 10Z",
+  hexagon: "M10 1 18 5.5V14.5L10 19 2 14.5V5.5Z",
+  stea: "M10 1l2.4 6.6H19l-5.6 4 2.1 6.6L10 14.4 4.5 18.2l2.1-6.6L1 7.6h6.6Z",
+};
 
 interface FigurePaletteProps {
   figures: Figure[];
@@ -8,6 +25,7 @@ interface FigurePaletteProps {
   onAdd: (role: FigureRole) => void;
   onRelabel: (id: string, label: string) => void;
   onRecolor: (id: string, color: FigureColor) => void;
+  onReshape: (id: string, shape: FigureShape) => void;
   onRemove: (id: string) => void;
 }
 
@@ -17,6 +35,7 @@ export default function FigurePalette({
   onAdd,
   onRelabel,
   onRecolor,
+  onReshape,
   onRemove,
 }: FigurePaletteProps) {
   const hasPrimaryUser = figures.some((f) => f.isPrimaryUser);
@@ -68,6 +87,29 @@ export default function FigurePalette({
                   outlineOffset: 2,
                 }}
               />
+            ))}
+          </div>
+
+          <label className="mb-1 block text-xs text-foreground/50">Formă</label>
+          <div className="mb-3 flex flex-wrap gap-2">
+            {FIGURE_SHAPES.map((shape) => (
+              <button
+                key={shape.value}
+                type="button"
+                title={shape.label}
+                aria-label={shape.label}
+                onClick={() => onReshape(selectedFigure.id, shape.value)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
+                style={{
+                  borderColor: selectedFigure.shape === shape.value ? "#f1f0ff" : "rgba(255,255,255,0.1)",
+                  backgroundColor:
+                    selectedFigure.shape === shape.value ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
+                }}
+              >
+                <svg width={16} height={16} viewBox="0 0 20 20">
+                  <path d={SHAPE_ICON_PATHS[shape.value]} fill="#f1f0ff" />
+                </svg>
+              </button>
             ))}
           </div>
 
