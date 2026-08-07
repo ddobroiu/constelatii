@@ -1,40 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { Circle, Group, Line, RegularPolygon, Rect, Star, Text } from "react-konva";
+import { Circle, Group, Line, Text } from "react-konva";
 import type Konva from "konva";
 import { colorHex, type Figure } from "@/lib/board/types";
 import { facingVector } from "@/lib/board/geometry";
+import SymbolIcon from "./SymbolIcon";
 
 const RADIUS = 26;
 const HANDLE_DISTANCE = RADIUS + 18;
-
-interface ShapeStyle {
-  fill: string;
-  stroke: string;
-  strokeWidth: number;
-  shadowColor: string;
-  shadowBlur: number;
-  shadowOpacity: number;
-}
-
-function FigureBody({ shape, style }: { shape: Figure["shape"]; style: ShapeStyle }) {
-  switch (shape) {
-    case "patrat":
-      return <Rect width={RADIUS * 1.6} height={RADIUS * 1.6} offsetX={RADIUS * 0.8} offsetY={RADIUS * 0.8} cornerRadius={4} {...style} />;
-    case "triunghi":
-      return <RegularPolygon sides={3} radius={RADIUS * 1.2} {...style} />;
-    case "romb":
-      return <RegularPolygon sides={4} radius={RADIUS * 1.1} {...style} />;
-    case "hexagon":
-      return <RegularPolygon sides={6} radius={RADIUS} {...style} />;
-    case "stea":
-      return <Star numPoints={5} innerRadius={RADIUS * 0.5} outerRadius={RADIUS * 1.15} {...style} />;
-    case "cerc":
-    default:
-      return <Circle radius={RADIUS} {...style} />;
-  }
-}
 
 interface FigureTokenProps {
   figure: Figure;
@@ -73,17 +47,17 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
       onTap={() => onSelect(figure.id)}
       onDragMove={(e) => onDragMove(figure.id, e.target.x(), e.target.y())}
     >
-      <FigureBody
-        shape={figure.shape}
-        style={{
-          fill,
-          stroke: isSelected ? "#f1f0ff" : figure.isPrimaryUser ? "#f8fafc" : "rgba(255,255,255,0.35)",
-          strokeWidth: isSelected ? 2.5 : figure.isPrimaryUser ? 2 : 1.5,
-          shadowColor: "#000",
-          shadowBlur: isSelected ? 12 : 4,
-          shadowOpacity: 0.4,
-        }}
+      <Circle
+        radius={RADIUS}
+        fill="rgba(255,255,255,0.06)"
+        stroke={isSelected ? "#f1f0ff" : figure.isPrimaryUser ? "#f8fafc" : "rgba(255,255,255,0.35)"}
+        strokeWidth={isSelected ? 2.5 : figure.isPrimaryUser ? 2 : 1.5}
+        shadowColor="#000"
+        shadowBlur={isSelected ? 12 : 4}
+        shadowOpacity={0.4}
       />
+
+      <SymbolIcon icon={figure.symbol} x={0} y={0} size={RADIUS * 1.15} fill={fill} listening={false} />
 
       <Line points={[0, 0, handleX * 0.55, handleY * 0.55]} stroke="rgba(255,255,255,0.8)" strokeWidth={2} />
 

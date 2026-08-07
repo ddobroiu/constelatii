@@ -3,6 +3,7 @@
 import { Layer, Rect, Stage } from "react-konva";
 import type { BoardConfig } from "@/lib/board/types";
 import FigureToken from "./FigureToken";
+import ConnectorEdge from "./ConnectorEdge";
 
 interface BoardCanvasProps {
   boardConfig: BoardConfig;
@@ -25,6 +26,20 @@ export default function BoardCanvas({ boardConfig, selectedId, onSelect, onUpdat
     >
       <Layer>
         <Rect x={0} y={0} width={width} height={height} fill="#0b0d1f" cornerRadius={16} />
+
+        {boardConfig.relationships.map((rel) => {
+          const from = boardConfig.figures.find((f) => f.id === rel.fromId);
+          const to = boardConfig.figures.find((f) => f.id === rel.toId);
+          if (!from || !to) return null;
+          return (
+            <ConnectorEdge
+              key={rel.id}
+              relationship={rel}
+              from={{ x: from.position.x * width, y: from.position.y * height }}
+              to={{ x: to.position.x * width, y: to.position.y * height }}
+            />
+          );
+        })}
 
         {boardConfig.figures.map((figure) => (
           <FigureToken

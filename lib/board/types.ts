@@ -1,5 +1,9 @@
 import { z } from "zod";
 import type { BirthData } from "../astrology/types";
+import { CONNECTOR_SYMBOLS, DEFAULT_FIGURE_SYMBOL, FIGURE_SYMBOLS, type ConnectorSymbolId, type FigureSymbolId } from "../symbols/library";
+
+export { CONNECTOR_SYMBOLS, DEFAULT_FIGURE_SYMBOL, FIGURE_SYMBOLS };
+export type { ConnectorSymbolId, FigureSymbolId };
 
 export const FIGURE_ROLES = [
   { value: "eu", label: "Eu" },
@@ -42,30 +46,6 @@ export type FigureColor = (typeof FIGURE_COLORS)[number]["value"];
 
 export const DEFAULT_FIGURE_COLOR: FigureColor = "indigo";
 
-/**
- * Like color, the shape is a deliberate symbolic choice per figure (not tied
- * to role) — e.g. a sharp, angular shape chosen for a figure the user
- * associates with tension reads very differently from a soft circle. Konva
- * has a native primitive for every one of these, so no custom path drawing
- * is needed.
- */
-export const FIGURE_SHAPES = [
-  { value: "cerc", label: "Cerc" },
-  { value: "patrat", label: "Pătrat" },
-  { value: "triunghi", label: "Triunghi" },
-  { value: "romb", label: "Romb" },
-  { value: "hexagon", label: "Hexagon" },
-  { value: "stea", label: "Stea" },
-] as const;
-
-export type FigureShape = (typeof FIGURE_SHAPES)[number]["value"];
-
-export const DEFAULT_FIGURE_SHAPE: FigureShape = "cerc";
-
-export function shapeLabel(shape: FigureShape): string {
-  return FIGURE_SHAPES.find((s) => s.value === shape)?.label ?? shape;
-}
-
 export const PositionSchema = z.object({
   x: z.number().min(0).max(1),
   y: z.number().min(0).max(1),
@@ -78,7 +58,7 @@ export const FigureSchema = z.object({
   position: PositionSchema,
   rotation: z.number().min(0).max(360),
   color: z.enum(FIGURE_COLORS.map((c) => c.value) as [FigureColor, ...FigureColor[]]),
-  shape: z.enum(FIGURE_SHAPES.map((s) => s.value) as [FigureShape, ...FigureShape[]]),
+  symbol: z.enum(FIGURE_SYMBOLS.map((s) => s.value) as [FigureSymbolId, ...FigureSymbolId[]]),
   isPrimaryUser: z.boolean(),
   birthData: z.custom<BirthData>().nullable().optional(),
 });
@@ -94,8 +74,10 @@ export function colorLabel(color: FigureColor): string {
 }
 
 export const RelationshipSchema = z.object({
+  id: z.string(),
   fromId: z.string(),
   toId: z.string(),
+  symbol: z.enum(CONNECTOR_SYMBOLS.map((s) => s.value) as [ConnectorSymbolId, ...ConnectorSymbolId[]]),
   label: z.string().max(60).optional(),
 });
 

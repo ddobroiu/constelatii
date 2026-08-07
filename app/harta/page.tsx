@@ -5,15 +5,17 @@ import dynamic from "next/dynamic";
 import { nanoid } from "nanoid";
 import Starfield from "@/components/Starfield";
 import FigurePalette from "@/components/board/FigurePalette";
+import ConnectorPanel from "@/components/board/ConnectorPanel";
 import {
   DEFAULT_FIGURE_COLOR,
-  DEFAULT_FIGURE_SHAPE,
+  DEFAULT_FIGURE_SYMBOL,
   roleLabel,
   type BoardConfig,
+  type ConnectorSymbolId,
   type Figure,
   type FigureColor,
   type FigureRole,
-  type FigureShape,
+  type FigureSymbolId,
 } from "@/lib/board/types";
 import { nextFigurePosition } from "@/lib/board/geometry";
 import { focusRelationshipLabel, type QuestionnaireAnswers } from "@/lib/questionnaire/schema";
@@ -35,7 +37,7 @@ function makeFigure(role: FigureRole, position: { x: number; y: number }): Figur
     position,
     rotation: 0,
     color: DEFAULT_FIGURE_COLOR,
-    shape: DEFAULT_FIGURE_SHAPE,
+    symbol: DEFAULT_FIGURE_SYMBOL,
     isPrimaryUser: role === "eu",
   };
 }
@@ -97,10 +99,10 @@ export default function HartaPage() {
     }));
   }
 
-  function reshapeFigure(id: string, shape: FigureShape) {
+  function resymbolFigure(id: string, symbol: FigureSymbolId) {
     setBoardConfig((prev) => ({
       ...prev,
-      figures: prev.figures.map((f) => (f.id === id ? { ...f, shape } : f)),
+      figures: prev.figures.map((f) => (f.id === id ? { ...f, symbol } : f)),
     }));
   }
 
@@ -111,6 +113,20 @@ export default function HartaPage() {
       relationships: prev.relationships.filter((r) => r.fromId !== id && r.toId !== id),
     }));
     setSelectedId(null);
+  }
+
+  function addConnector(fromId: string, toId: string, symbol: ConnectorSymbolId) {
+    setBoardConfig((prev) => ({
+      ...prev,
+      relationships: [...prev.relationships, { id: nanoid(), fromId, toId, symbol }],
+    }));
+  }
+
+  function removeConnector(id: string) {
+    setBoardConfig((prev) => ({
+      ...prev,
+      relationships: prev.relationships.filter((r) => r.id !== id),
+    }));
   }
 
   return (
@@ -127,19 +143,27 @@ export default function HartaPage() {
       </div>
 
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-start gap-6 sm:flex-row sm:justify-center">
-        <BoardCanvas
-          boardConfig={boardConfig}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          onUpdateFigure={updateFigure}
-        />
+        <div className="flex flex-col gap-6">
+          <BoardCanvas
+            boardConfig={boardConfig}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onUpdateFigure={updateFigure}
+          />
+          <ConnectorPanel
+            figures={boardConfig.figures}
+            relationships={boardConfig.relationships}
+            onAdd={addConnector}
+            onRemove={removeConnector}
+          />
+        </div>
         <FigurePalette
           figures={boardConfig.figures}
           selectedFigure={selectedFigure}
           onAdd={addFigure}
           onRelabel={relabelFigure}
           onRecolor={recolorFigure}
-          onReshape={reshapeFigure}
+          onResymbol={resymbolFigure}
           onRemove={removeFigure}
         />
       </div>
