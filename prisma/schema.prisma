@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Session {
+  id             String    @id @default(uuid())
+  token          String    @unique
+  email          String?
+  boardConfig    Json?     @map("board_config")
+  questionnaire  Json?
+  birthData      Json?     @map("birth_data")
+  natalChart     Json?     @map("natal_chart")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  lastActivityAt DateTime  @default(now()) @map("last_activity_at")
+
+  report   Report?
+  payments Payment[]
+
+  @@map("sessions")
+}
+
+model Report {
+  id            String   @id @default(uuid())
+  sessionId     String   @unique @map("session_id")
+  teaserText    String?  @map("teaser_text")
+  fullText      String?  @map("full_text")
+  status        String   @default("pending")
+  modelUsed     String?  @map("model_used")
+  promptVersion String?  @map("prompt_version")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
+
+model Payment {
+  id                      String    @id @default(uuid())
+  sessionId               String    @map("session_id")
+  stripeCheckoutSessionId String    @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId   String?   @map("stripe_payment_intent_id")
+  amountCents             Int       @map("amount_cents")
+  currency                String
+  status                  String    @default("pending")
+  unlockedAt              DateTime? @map("unlocked_at")
+  createdAt               DateTime  @default(now()) @map("created_at")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
