@@ -6,51 +6,57 @@ datasource db {
   provider = "postgresql"
 }
 
-model Session {
-  id             String    @id @default(uuid())
-  token          String    @unique
-  email          String?
-  boardConfig    Json?     @map("board_config")
-  questionnaire  Json?
-  birthData      Json?     @map("birth_data")
-  natalChart     Json?     @map("natal_chart")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  lastActivityAt DateTime  @default(now()) @map("last_activity_at")
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String?
+  referralCode String   @unique @map("referral_code")
+  referredById String?  @map("referred_by_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  report   Report?
-  payments Payment[]
+  referredBy User?  @relation("Referrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals  User[] @relation("Referrals")
 
-  @@map("sessions")
+  constellations SavedConstellation[]
+  payments       Payment[]
+
+  @@map("users")
 }
 
-model Report {
+model SavedConstellation {
   id            String   @id @default(uuid())
-  sessionId     String   @unique @map("session_id")
+  userId        String   @map("user_id")
+  title         String
+  boardConfig   Json     @map("board_config")
+  questionnaire Json
+  natalChart    Json?    @map("natal_chart")
   teaserText    String?  @map("teaser_text")
-  fullText      String?  @map("full_text")
-  status        String   @default("pending")
-  modelUsed     String?  @map("model_used")
-  promptVersion String?  @map("prompt_version")
+  fullReport    Json?    @map("full_report")
   createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
 
-  @@map("reports")
+  @@map("saved_constellations")
 }
 
 model Payment {
   id                      String    @id @default(uuid())
-  sessionId               String    @map("session_id")
+  userId                  String    @map("user_id")
+  constellationId         String    @map("constellation_id")
   stripeCheckoutSessionId String    @unique @map("stripe_checkout_session_id")
   stripePaymentIntentId   String?   @map("stripe_payment_intent_id")
   amountCents             Int       @map("amount_cents")
   currency                String
-  status                  String    @default("pending")
+  status                  String    @default("pending") // pending | paid | failed | refunded
   unlockedAt              DateTime? @map("unlocked_at")
   createdAt               DateTime  @default(now()) @map("created_at")
 
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  constellation SavedConstellation @relation(fields: [constellationId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }
