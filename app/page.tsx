@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Starfield from "@/components/Starfield";
+import { PILLARS } from "@/lib/seo/pillars";
 
 export default function Home() {
   return (
@@ -34,6 +35,18 @@ export default function Home() {
         <p className="text-xs text-foreground/40">
           Nu înlocuiește terapia sau consilierea psihologică — este un instrument de auto-reflecție.
         </p>
+
+        <nav className="flex flex-wrap justify-center gap-2 pt-4">
+          {PILLARS.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/${p.slug}`}
+              className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-foreground/70 transition-colors hover:bg-white/10"
+            >
+              {p.label}
+            </Link>
+          ))}
+        </nav>
       </main>
     </div>
   );
