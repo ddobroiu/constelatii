@@ -6,6 +6,7 @@ import { nanoid } from "nanoid";
 import Starfield from "@/components/Starfield";
 import FigurePalette from "@/components/board/FigurePalette";
 import ConnectorPanel from "@/components/board/ConnectorPanel";
+import InterpretationPanel from "@/components/report/InterpretationPanel";
 import {
   DEFAULT_FIGURE_COLOR,
   DEFAULT_FIGURE_SYMBOL,
@@ -167,6 +168,8 @@ export default function HartaPage() {
           onRemove={removeFigure}
         />
       </div>
+
+      <InterpretationPanel board={boardConfig} questionnaire={questionnaire} />
     </div>
   );
 }

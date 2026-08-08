@@ -1,14 +1,15 @@
 "use client";
 
 import { useRef } from "react";
-import { Circle, Group, Line, Text } from "react-konva";
+import { Circle, Group, Line, RegularPolygon, Text } from "react-konva";
 import type Konva from "konva";
 import { colorHex, type Figure } from "@/lib/board/types";
 import { facingVector } from "@/lib/board/geometry";
 import SymbolIcon from "./SymbolIcon";
 
 const RADIUS = 26;
-const HANDLE_DISTANCE = RADIUS + 18;
+const ARROW_DISTANCE = RADIUS + 14;
+const HANDLE_DISTANCE = RADIUS + 28;
 
 interface FigureTokenProps {
   figure: Figure;
@@ -32,6 +33,8 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
   const groupRef = useRef<Konva.Group>(null);
 
   const facing = facingVector(figure.rotation);
+  const arrowX = facing.x * ARROW_DISTANCE;
+  const arrowY = facing.y * ARROW_DISTANCE;
   const handleX = facing.x * HANDLE_DISTANCE;
   const handleY = facing.y * HANDLE_DISTANCE;
 
@@ -59,7 +62,24 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
 
       <SymbolIcon icon={figure.symbol} x={0} y={0} size={RADIUS * 1.15} fill={fill} listening={false} />
 
-      <Line points={[0, 0, handleX * 0.55, handleY * 0.55]} stroke="rgba(255,255,255,0.8)" strokeWidth={2} />
+      {/* Facing indicator — always visible, not just on selection, so orientation reads at a glance. */}
+      <Line
+        points={[facing.x * RADIUS, facing.y * RADIUS, arrowX, arrowY]}
+        stroke="#f1f0ff"
+        strokeWidth={2}
+        listening={false}
+      />
+      <RegularPolygon
+        x={arrowX}
+        y={arrowY}
+        sides={3}
+        radius={7}
+        rotation={figure.rotation}
+        fill="#f1f0ff"
+        stroke="#05060f"
+        strokeWidth={1}
+        listening={false}
+      />
 
       <Text
         text={figure.label}
@@ -67,7 +87,7 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
         fill="#f1f0ff"
         width={90}
         offsetX={45}
-        y={RADIUS + 8}
+        y={RADIUS + 24}
         align="center"
       />
 
