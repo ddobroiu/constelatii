@@ -6,7 +6,7 @@ import { featuredCounties } from "@/lib/seo/counties";
 export const metadata: Metadata = {
   title: "Terapie și autocunoaștere prin constelații familiale | Constelații Familiale",
   description:
-    "Un instrument de auto-reflecție bazat pe metoda constelațiilor familiale (Bert Hellinger), gândit ca punct de plecare pentru terapie, nu ca înlocuitor al ei. Explorează-ți tiparele printr-o constelație interactivă interpretată de AI.",
+    "Un instrument de auto-reflecție bazat pe metoda constelațiilor familiale (Bert Hellinger), gândit ca punct de plecare pentru terapie sau pentru discuția cu un terapeut, nu ca înlocuitor al ei. Explorează-ți tiparele printr-o constelație interactivă interpretată de AI.",
 };
 
 export default function TerapieAutocunoasterePage() {

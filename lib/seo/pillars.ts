@@ -55,4 +55,22 @@ export const PILLARS: Pillar[] = [
     shortLabel: "Anxietate",
     description: "Anxietatea „fără motiv aparent” poate fi, uneori, un rol moștenit din familie, nu doar al tău.",
   },
+  {
+    slug: "de-ce-nu-atrag-bani",
+    label: "De ce nu atrag bani",
+    shortLabel: "De ce nu atrag bani",
+    description: "Nu e despre cât de tare vrei sau muncești — e despre dacă sistemul tău interior îți permite să primești.",
+  },
+  {
+    slug: "de-ce-nu-atrag-relatii",
+    label: "De ce nu atrag relații",
+    shortLabel: "De ce nu atrag relații",
+    description: "Când relațiile pur și simplu nu se întâmplă — nu despre tipare într-o relație, ci despre absența lor.",
+  },
+  {
+    slug: "meditatie",
+    label: "Meditație și practică interioară",
+    shortLabel: "Meditație",
+    description: "De ce o constelație e, în esență, o formă de meditație activă — și cum te pregătești pentru ea.",
+  },
 ];
