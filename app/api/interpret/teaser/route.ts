@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { BoardConfigSchema } from "@/lib/board/types";
 import { QuestionnaireAnswersSchema } from "@/lib/questionnaire/schema";
+import { NatalChartSchema } from "@/lib/astrology/types";
 import { generateTeaser } from "@/lib/claude/generateTeaser";
 
 const RequestSchema = z.object({
   board: BoardConfigSchema,
   questionnaire: QuestionnaireAnswersSchema,
+  natalChart: NatalChartSchema.nullable().optional(),
 });
 
 export async function POST(request: Request) {
@@ -25,7 +27,7 @@ export async function POST(request: Request) {
     const teaser = await generateTeaser({
       board: parsed.data.board,
       questionnaire: parsed.data.questionnaire,
-      natalChart: null,
+      natalChart: parsed.data.natalChart ?? null,
     });
 
     return NextResponse.json(teaser);

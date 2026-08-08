@@ -5,17 +5,19 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
+import type { NatalChart } from "@/lib/astrology/types";
 
 interface InterpretationPanelProps {
   board: BoardConfig;
   questionnaire: QuestionnaireAnswers | null;
+  natalChart: NatalChart | null;
 }
 
 type TeaserStatus = "idle" | "loading" | "error" | "done";
 type SaveStatus = "idle" | "saving" | "done" | "error";
 type CheckoutStatus = "idle" | "loading" | "error";
 
-export default function InterpretationPanel({ board, questionnaire }: InterpretationPanelProps) {
+export default function InterpretationPanel({ board, questionnaire, natalChart }: InterpretationPanelProps) {
   const { data: session, status: sessionStatus } = useSession();
 
   const [teaserStatus, setTeaserStatus] = useState<TeaserStatus>("idle");
@@ -38,7 +40,7 @@ export default function InterpretationPanel({ board, questionnaire }: Interpreta
       const res = await fetch("/api/interpret/teaser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ board, questionnaire }),
+        body: JSON.stringify({ board, questionnaire, natalChart }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -62,7 +64,7 @@ export default function InterpretationPanel({ board, questionnaire }: Interpreta
     fetch("/api/constellations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ board, questionnaire, teaserText: teaser }),
+      body: JSON.stringify({ board, questionnaire, natalChart, teaserText: teaser }),
     })
       .then(async (res) => {
         if (!res.ok) throw new Error();

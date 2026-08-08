@@ -89,3 +89,39 @@ export interface NatalChart {
   houses: HouseCusp[];
   aspects: AspectData[];
 }
+
+/** Mirrors NatalChart, used only to validate charts round-tripped through the client (sessionStorage -> API). */
+export const NatalChartSchema: z.ZodType<NatalChart> = z.object({
+  birthData: BirthDataSchema,
+  hasExactTime: z.boolean(),
+  ascendant: z.number().nullable(),
+  midheaven: z.number().nullable(),
+  houseSystem: z.literal("whole-sign"),
+  planets: z.array(
+    z.object({
+      planet: z.enum(PLANETS),
+      longitude: z.number(),
+      sign: z.enum(ZODIAC_SIGNS),
+      degreeInSign: z.number(),
+      house: z.number().nullable(),
+      retrograde: z.boolean(),
+    })
+  ),
+  houses: z.array(
+    z.object({
+      house: z.number(),
+      cuspLongitude: z.number(),
+      sign: z.enum(ZODIAC_SIGNS),
+    })
+  ),
+  aspects: z.array(
+    z.object({
+      planetA: z.enum(PLANETS),
+      planetB: z.enum(PLANETS),
+      type: z.enum(ASPECT_TYPES),
+      angle: z.number(),
+      orb: z.number(),
+      applying: z.boolean(),
+    })
+  ),
+});

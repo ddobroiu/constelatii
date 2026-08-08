@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { generateFullReport } from "@/lib/claude/generateFullReport";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
+import type { NatalChart } from "@/lib/astrology/types";
 
 async function unlockAndGenerateReport(checkoutSession: Stripe.Checkout.Session) {
   const paymentIntentId =
@@ -27,7 +28,7 @@ async function unlockAndGenerateReport(checkoutSession: Stripe.Checkout.Session)
   const fullReport = await generateFullReport({
     board: payment.constellation.boardConfig as unknown as BoardConfig,
     questionnaire: payment.constellation.questionnaire as unknown as QuestionnaireAnswers,
-    natalChart: (payment.constellation.natalChart as never) ?? null,
+    natalChart: (payment.constellation.natalChart as unknown as NatalChart | null) ?? null,
   });
 
   await prisma.savedConstellation.update({

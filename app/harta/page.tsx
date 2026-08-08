@@ -20,7 +20,8 @@ import {
 } from "@/lib/board/types";
 import { nextFigurePosition } from "@/lib/board/geometry";
 import { focusRelationshipLabel, type QuestionnaireAnswers } from "@/lib/questionnaire/schema";
-import { loadQuestionnaireAnswers } from "@/lib/session/clientStore";
+import { loadQuestionnaireAnswers, loadNatalChart } from "@/lib/session/clientStore";
+import type { NatalChart } from "@/lib/astrology/types";
 
 const BoardCanvas = dynamic(() => import("@/components/board/BoardCanvas"), { ssr: false });
 
@@ -47,9 +48,11 @@ export default function HartaPage() {
   const [boardConfig, setBoardConfig] = useState<BoardConfig>(initialBoardConfig);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireAnswers | null>(null);
+  const [natalChart, setNatalChart] = useState<NatalChart | null>(null);
 
   // Seed the board from the questionnaire's chosen figures, once, on first load.
   useEffect(() => {
+    setNatalChart(loadNatalChart());
     const answers = loadQuestionnaireAnswers();
     if (!answers) return;
     setQuestionnaire(answers);
@@ -172,7 +175,7 @@ export default function HartaPage() {
         />
       </div>
 
-      <InterpretationPanel board={boardConfig} questionnaire={questionnaire} />
+      <InterpretationPanel board={boardConfig} questionnaire={questionnaire} natalChart={natalChart} />
     </div>
   );
 }
