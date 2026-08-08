@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Starfield from "@/components/Starfield";
 
 interface Section {
   heading: string;
@@ -32,8 +31,6 @@ export default function ArticlePage({
 }: ArticlePageProps) {
   return (
     <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6 py-16">
-      <Starfield count={70} />
-
       <article className="relative z-10 flex w-full max-w-2xl flex-col gap-10">
         <header className="flex flex-col items-center gap-3 text-center">
           <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm tracking-wide text-accent">

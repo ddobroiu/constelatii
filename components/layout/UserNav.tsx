@@ -7,7 +7,7 @@ export default function UserNav() {
   const { data: session, status } = useSession();
 
   return (
-    <nav className="relative z-20 flex w-full items-center justify-end gap-4 px-6 py-4 text-sm">
+    <div className="flex items-center gap-4 text-sm">
       {status === "loading" ? null : session?.user ? (
         <>
           <Link href="/cont" className="text-foreground/70 transition-colors hover:text-foreground">
@@ -34,6 +34,6 @@ export default function UserNav() {
           </Link>
         </>
       )}
-    </nav>
+    </div>
   );
 }

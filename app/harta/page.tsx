@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { nanoid } from "nanoid";
-import Starfield from "@/components/Starfield";
 import FigurePalette from "@/components/board/FigurePalette";
 import ConnectorPanel from "@/components/board/ConnectorPanel";
 import InterpretationPanel from "@/components/report/InterpretationPanel";
@@ -132,7 +131,6 @@ export default function HartaPage() {
 
   return (
     <div className="relative flex flex-1 flex-col items-center gap-8 overflow-hidden px-6 py-16">
-      <Starfield count={80} />
 
       <div className="relative z-10 flex max-w-3xl flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-semibold sm:text-3xl">Așază-ți constelația</h1>

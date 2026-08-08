@@ -1,11 +1,9 @@
 import Link from "next/link";
-import Starfield from "@/components/Starfield";
 import { PILLARS } from "@/lib/seo/pillars";
 
 export default function Home() {
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-24">
-      <Starfield />
 
       <main className="relative z-10 flex max-w-2xl flex-col items-center gap-8 text-center">
         <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm tracking-wide text-accent">

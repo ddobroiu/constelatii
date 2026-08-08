@@ -1,6 +1,5 @@
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import Starfield from "@/components/Starfield";
 import ConstellationDetail from "@/components/account/ConstellationDetail";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -23,7 +22,6 @@ export default async function ConstellationDetailPage({ params }: { params: Prom
 
   return (
     <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6 py-16">
-      <Starfield count={70} />
 
       <div className="relative z-10 flex w-full max-w-2xl flex-col gap-8">
         <header className="flex items-center justify-between">

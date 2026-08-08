@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Starfield from "@/components/Starfield";
 import ReferralLink from "@/components/account/ReferralLink";
 import { auth } from "@/lib/auth/auth";
 import { getUserAccountData } from "@/lib/db/queries";
@@ -19,7 +18,6 @@ export default async function ContPage() {
 
   return (
     <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6 py-16">
-      <Starfield count={70} />
 
       <div className="relative z-10 flex w-full max-w-2xl flex-col gap-10">
         <header className="text-center">
