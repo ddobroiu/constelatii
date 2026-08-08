@@ -1,15 +1,11 @@
+# Postgres ruleaza deja pe server, in containerul "postgres-db" partajat cu
+# celelalte proiecte (baza de date dedicata "constelatii" a fost creata acolo,
+# vezi DATABASE_URL din .env). Acest compose porneste doar aplicatia Next.js.
 services:
-  postgres:
-    image: postgres:16-alpine
+  app:
+    build: .
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: constelatii
-      POSTGRES_PASSWORD: constelatii
-      POSTGRES_DB: constelatii
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+      - "3006:3000"
+    env_file:
+      - .env
