@@ -3,7 +3,10 @@
 # vezi DATABASE_URL din .env). Acest compose porneste doar aplicatia Next.js.
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        DATABASE_URL: ${DATABASE_URL}
     restart: unless-stopped
     ports:
       - "3006:3000"

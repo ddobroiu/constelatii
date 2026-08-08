@@ -11,6 +11,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# prisma.config.ts resolves DATABASE_URL eagerly even for `generate` (no live
+# connection needed, just needs a value present) — passed in as a build arg.
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate
 RUN npm run build
 
