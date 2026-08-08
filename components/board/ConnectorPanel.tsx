@@ -72,23 +72,29 @@ export default function ConnectorPanel({ figures, relationships, onAdd, onRemove
         </select>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-2">
+      <div className="mb-1 grid grid-cols-4 gap-3 sm:grid-cols-8">
         {CONNECTOR_SYMBOLS.map((s) => (
           <button
             key={s.value}
             type="button"
             title={`${s.label} — ${s.meaning}`}
+            aria-label={s.label}
             onClick={() => setSymbol(s.value)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-lg border transition-colors"
             style={{
               borderColor: symbol === s.value ? "#f1f0ff" : "rgba(255,255,255,0.1)",
               backgroundColor: symbol === s.value ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
             }}
           >
-            <InlineSymbolIcon icon={s.icon} size={16} />
+            <InlineSymbolIcon icon={s.icon} size={20} />
           </button>
         ))}
       </div>
+      {symbol && (
+        <p className="mb-3 text-xs italic text-foreground/40">
+          {CONNECTOR_SYMBOLS.find((s) => s.value === symbol)?.meaning}
+        </p>
+      )}
 
       <button
         type="button"

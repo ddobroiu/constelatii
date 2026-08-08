@@ -55,8 +55,8 @@ export default function FigurePalette({
             className="mb-3 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-sm outline-none focus:border-accent"
           />
 
-          <label className="mb-1 block text-xs text-foreground/50">Culoare</label>
-          <div className="mb-3 flex flex-wrap gap-2">
+          <label className="mb-2 block text-xs text-foreground/50">Culoare</label>
+          <div className="mb-4 flex flex-wrap gap-2.5">
             {FIGURE_COLORS.map((color) => (
               <button
                 key={color.value}
@@ -64,7 +64,7 @@ export default function FigurePalette({
                 title={color.label}
                 aria-label={color.label}
                 onClick={() => onRecolor(selectedFigure.id, color.value)}
-                className="h-6 w-6 rounded-full transition-transform hover:scale-110"
+                className="h-7 w-7 rounded-full transition-transform hover:scale-110"
                 style={{
                   backgroundColor: color.hex,
                   outline: selectedFigure.color === color.value ? "2px solid #f1f0ff" : "none",
@@ -74,8 +74,8 @@ export default function FigurePalette({
             ))}
           </div>
 
-          <label className="mb-1 block text-xs text-foreground/50">Simbol</label>
-          <div className="mb-1 grid grid-cols-5 gap-2">
+          <label className="mb-2 block text-xs text-foreground/50">Simbol</label>
+          <div className="mb-2 grid grid-cols-4 gap-3">
             {FIGURE_SYMBOLS.map((s) => (
               <button
                 key={s.value}
@@ -83,14 +83,14 @@ export default function FigurePalette({
                 title={`${s.label} — ${s.meaning}`}
                 aria-label={s.label}
                 onClick={() => onResymbol(selectedFigure.id, s.value)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
+                className="flex h-11 w-11 items-center justify-center rounded-lg border transition-colors"
                 style={{
                   borderColor: selectedFigure.symbol === s.value ? "#f1f0ff" : "rgba(255,255,255,0.1)",
                   backgroundColor:
                     selectedFigure.symbol === s.value ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
                 }}
               >
-                <InlineSymbolIcon icon={s.icon} size={16} />
+                <InlineSymbolIcon icon={s.icon} size={20} />
               </button>
             ))}
           </div>
@@ -107,11 +107,6 @@ export default function FigurePalette({
           </button>
         </div>
       )}
-
-      <p className="text-xs leading-relaxed text-foreground/40">
-        Trage figurile pentru a le poziționa. Selectează o figură și trage mânerul alb pentru a-i
-        seta direcția în care privește.
-      </p>
     </div>
   );
 }

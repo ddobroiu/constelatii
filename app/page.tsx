@@ -35,7 +35,7 @@ export default function Home() {
         </p>
 
         <nav className="flex flex-wrap justify-center gap-2 pt-4">
-          {PILLARS.map((p) => (
+          {PILLARS.slice(0, 4).map((p) => (
             <Link
               key={p.slug}
               href={`/${p.slug}`}
@@ -44,6 +44,12 @@ export default function Home() {
               {p.label}
             </Link>
           ))}
+          <Link
+            href="/articole"
+            className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-sm text-accent transition-colors hover:bg-accent/20"
+          >
+            Toate articolele →
+          </Link>
         </nav>
       </main>
     </div>

@@ -20,13 +20,16 @@ export default function SiteFooter() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-medium uppercase tracking-wide text-foreground/40">Explorează</span>
+          <span className="text-xs font-medium uppercase tracking-wide text-foreground/40">Articole</span>
           <div className="flex flex-col gap-2 text-sm text-foreground/60">
-            {PILLARS.map((p) => (
+            {PILLARS.slice(0, 4).map((p) => (
               <Link key={p.slug} href={`/${p.slug}`} className="transition-colors hover:text-foreground">
-                {p.label}
+                {p.shortLabel}
               </Link>
             ))}
+            <Link href="/articole" className="text-accent transition-colors hover:text-accent-soft">
+              Toate articolele →
+            </Link>
           </div>
         </div>
 

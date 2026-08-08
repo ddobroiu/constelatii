@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { nanoid } from "nanoid";
 import FigurePalette from "@/components/board/FigurePalette";
 import ConnectorPanel from "@/components/board/ConnectorPanel";
+import HowItWorks from "@/components/board/HowItWorks";
 import InterpretationPanel from "@/components/report/InterpretationPanel";
 import {
   DEFAULT_FIGURE_COLOR,
@@ -141,8 +142,12 @@ export default function HartaPage() {
         </p>
       </div>
 
+      <div className="relative z-10 w-full max-w-4xl">
+        <HowItWorks />
+      </div>
+
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-start gap-6 sm:flex-row sm:justify-center">
-        <div className="flex flex-col gap-6">
+        <div className="flex w-full flex-col gap-6 sm:w-auto">
           <BoardCanvas
             boardConfig={boardConfig}
             selectedId={selectedId}
