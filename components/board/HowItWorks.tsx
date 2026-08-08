@@ -17,11 +17,18 @@ const STEPS = [
   },
 ];
 
-export default function HowItWorks() {
+interface HowItWorksProps {
+  /** How many steps to reveal so far — grows as the user completes each action. */
+  visibleCount: number;
+}
+
+export default function HowItWorks({ visibleCount }: HowItWorksProps) {
+  const steps = STEPS.slice(0, visibleCount);
+
   return (
     <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-4">
-      {STEPS.map((step, i) => (
-        <div key={step.title} className="rounded-xl border border-white/10 bg-white/5 p-4">
+      {steps.map((step, i) => (
+        <div key={step.title} className="animate-step-in rounded-xl border border-white/10 bg-white/5 p-4">
           <div className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-accent/20 text-xs font-medium text-accent">
             {i + 1}
           </div>

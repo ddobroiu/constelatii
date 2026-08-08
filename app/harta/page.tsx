@@ -49,6 +49,8 @@ export default function HartaPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireAnswers | null>(null);
   const [natalChart, setNatalChart] = useState<NatalChart | null>(null);
+  const [hasDragged, setHasDragged] = useState(false);
+  const [hasRotated, setHasRotated] = useState(false);
 
   // Seed the board from the questionnaire's chosen figures, once, on first load.
   useEffect(() => {
@@ -65,6 +67,11 @@ export default function HartaPage() {
 
   const selectedFigure = boardConfig.figures.find((f) => f.id === selectedId) ?? null;
 
+  let visibleSteps = 1;
+  if (boardConfig.figures.length > 0) visibleSteps = 2;
+  if (hasDragged) visibleSteps = 3;
+  if (hasRotated) visibleSteps = 4;
+
   function addFigure(role: FigureRole) {
     const figure = makeFigure(role, nextFigurePosition(boardConfig.figures.length));
     setBoardConfig((prev) => ({ ...prev, figures: [...prev.figures, figure] }));
@@ -72,6 +79,8 @@ export default function HartaPage() {
   }
 
   function updateFigure(id: string, patch: { x?: number; y?: number; rotation?: number }) {
+    if (patch.x !== undefined || patch.y !== undefined) setHasDragged(true);
+    if (patch.rotation !== undefined) setHasRotated(true);
     setBoardConfig((prev) => ({
       ...prev,
       figures: prev.figures.map((f) =>
@@ -146,7 +155,7 @@ export default function HartaPage() {
       </div>
 
       <div className="relative z-10 w-full max-w-4xl">
-        <HowItWorks />
+        <HowItWorks visibleCount={visibleSteps} />
       </div>
 
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-start gap-6 sm:flex-row sm:justify-center">

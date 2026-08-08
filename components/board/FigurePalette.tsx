@@ -25,7 +25,7 @@ export default function FigurePalette({
   const hasPrimaryUser = figures.some((f) => f.isPrimaryUser);
 
   return (
-    <div className="flex w-full flex-col gap-6 sm:w-64">
+    <div className="flex w-full flex-col gap-6 sm:w-80">
       <div>
         <h2 className="mb-3 text-sm font-medium text-foreground/60">Adaugă o figură</h2>
         <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export default function FigurePalette({
           </div>
 
           <label className="mb-2 block text-xs text-foreground/50">Simbol</label>
-          <div className="mb-2 grid grid-cols-4 gap-3">
+          <div className="mb-2 grid grid-cols-3 gap-3">
             {FIGURE_SYMBOLS.map((s) => (
               <button
                 key={s.value}
@@ -83,14 +83,14 @@ export default function FigurePalette({
                 title={`${s.label} — ${s.meaning}`}
                 aria-label={s.label}
                 onClick={() => onResymbol(selectedFigure.id, s.value)}
-                className="flex h-11 w-11 items-center justify-center rounded-lg border transition-colors"
+                className="flex h-12 w-12 items-center justify-center rounded-lg border transition-colors"
                 style={{
                   borderColor: selectedFigure.symbol === s.value ? "#f1f0ff" : "rgba(255,255,255,0.1)",
                   backgroundColor:
                     selectedFigure.symbol === s.value ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
                 }}
               >
-                <InlineSymbolIcon icon={s.icon} size={20} />
+                <InlineSymbolIcon icon={s.icon} size={22} />
               </button>
             ))}
           </div>
