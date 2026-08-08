@@ -99,6 +99,7 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
           fill="#f1f0ff"
           draggable
           onDragMove={(e) => {
+            e.cancelBubble = true; // don't let this re-trigger the parent Group's onDragMove
             const rotation = angleFromCenter(0, 0, e.target.x(), e.target.y());
             const rad = (rotation * Math.PI) / 180;
             e.target.x(Math.sin(rad) * HANDLE_DISTANCE);
@@ -106,8 +107,12 @@ export default function FigureToken({ figure, x, y, isSelected, onSelect, onDrag
             onRotate(figure.id, rotation);
           }}
           onDragEnd={(e) => {
+            e.cancelBubble = true;
             const rotation = angleFromCenter(0, 0, e.target.x(), e.target.y());
             onRotate(figure.id, rotation);
+          }}
+          onDragStart={(e) => {
+            e.cancelBubble = true;
           }}
         />
       )}
