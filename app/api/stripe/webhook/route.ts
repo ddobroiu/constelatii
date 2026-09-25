@@ -5,6 +5,7 @@ import { appUrl, getStripe, stripeConfigured } from "@/lib/stripe/client";
 import { isOblioConfigured, issueInvoice } from "@/lib/billing/oblio";
 import { prisma } from "@/lib/db/prisma";
 import { sendPurchaseEmail } from "@/lib/email";
+import { alerta } from "@/lib/alerts";
 
 /**
  * Confirmarea plății, venită de la Stripe.
@@ -56,6 +57,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true, credited: result.credited });
   } catch (err) {
     console.error("Eroare la creditarea portofelului:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    void alerta("error", "stripe-webhook", `Constelatii Familiale: plata ${checkoutSession.id} nu a putut fi procesata: ${message}`);
     return NextResponse.json({ error: "Eroare internă." }, { status: 500 });
   }
 }
@@ -79,6 +82,7 @@ async function afterCredit(session: Stripe.Checkout.Session, pack: { name: strin
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       console.error("[oblio] factura:", session.id, message);
+      void alerta("error", "oblio", `Constelatii Familiale: factura Oblio nu s-a emis pentru plata ${session.id}: ${message}`);
       await prisma.packPurchase
         .update({ where: { stripeCheckoutSessionId: session.id }, data: { invoiceError: message.slice(0, 500) } })
         .catch(() => {});

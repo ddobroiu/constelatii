@@ -4,6 +4,7 @@ import { BoardConfigSchema } from "@/lib/board/types";
 import { QuestionnaireAnswersSchema } from "@/lib/questionnaire/schema";
 import { NatalChartSchema } from "@/lib/astrology/types";
 import { generateTeaser } from "@/lib/claude/generateTeaser";
+import { alerta, faraCredite } from "@/lib/alerts";
 
 const RequestSchema = z.object({
   board: BoardConfigSchema,
@@ -33,6 +34,14 @@ export async function POST(request: Request) {
     return NextResponse.json(teaser);
   } catch (err) {
     console.error("Eroare la generarea teaser-ului:", err);
+    if (faraCredite(err)) {
+      const short = err instanceof Error ? err.message : String(err);
+      void alerta(
+        "credits",
+        "anthropic",
+        `Constelatii Familiale: Anthropic a refuzat cererea - credite terminate. Generarea nu merge pana nu reincarci contul: ${short.slice(0, 300)}`,
+      );
+    }
     return NextResponse.json({ error: "Nu am putut genera interpretarea. Încearcă din nou." }, { status: 502 });
   }
 }

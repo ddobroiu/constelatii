@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { generateFullReport } from "@/lib/claude/generateFullReport";
+import { alerta, faraCredite } from "@/lib/alerts";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
 import type { NatalChart } from "@/lib/astrology/types";
@@ -62,6 +63,14 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
     // nimic nu se marchează deblocat. Omul poate încerca din nou.
     await prisma.wallet.update({ where: { userId }, data: { creditsBalance: { increment: 1 } } });
     console.error("Eroare la generarea raportului complet:", err);
+    if (faraCredite(err)) {
+      const short = err instanceof Error ? err.message : String(err);
+      void alerta(
+        "credits",
+        "anthropic",
+        `Constelatii Familiale: Anthropic a refuzat cererea - credite terminate. Generarea nu merge pana nu reincarci contul: ${short.slice(0, 300)}`,
+      );
+    }
     return NextResponse.json(
       { error: "Nu am putut genera raportul. Creditul nu a fost cheltuit — încearcă din nou." },
       { status: 502 },
