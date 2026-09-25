@@ -29,6 +29,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/* mydashboard.ro: vizite, surse de trafic și legătura cu plățile (proiectul constelatii) */}
+        <script defer src="https://mydashboard.ro/t.js" data-site="e042bf6033475cf2" />
         {/* Consent Mode v2 -- trebuie sa ruleze inainte de gtag.js. Pe acest
             site paginile vizitate spun singure prin ce trece omul, asa ca
             implicit totul e refuzat pana la acceptul explicit. */}

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { creditPurchase } from "@/lib/billing/packs";
-import { getStripe, stripeConfigured } from "@/lib/stripe/client";
+import { appUrl, getStripe, stripeConfigured } from "@/lib/stripe/client";
+import { isOblioConfigured, issueInvoice } from "@/lib/billing/oblio";
+import { prisma } from "@/lib/db/prisma";
+import { sendPurchaseEmail } from "@/lib/email";
 
 /**
  * Confirmarea plății, venită de la Stripe.
@@ -42,12 +45,45 @@ export async function POST(request: Request) {
   if (checkoutSession.payment_status !== "paid") {
     return NextResponse.json({ received: true });
   }
+  // contul Stripe e comun aplicatiilor: evenimentele altor proiecte nu sunt ale noastre
+  if (checkoutSession.metadata?.project && checkoutSession.metadata.project !== "constelatii") {
+    return NextResponse.json({ received: true });
+  }
 
   try {
     const result = await creditPurchase(checkoutSession.id);
+    if (result.credited) await afterCredit(checkoutSession, result.pack);
     return NextResponse.json({ received: true, credited: result.credited });
   } catch (err) {
     console.error("Eroare la creditarea portofelului:", err);
     return NextResponse.json({ error: "Eroare internă." }, { status: 500 });
   }
+}
+
+// Dupa prima creditare: factura Oblio (pe datele cerute de Stripe la plata) si e-mailul de confirmare.
+// Nimic de aici nu blocheaza creditarea.
+async function afterCredit(session: Stripe.Checkout.Session, pack: { name: string; credits: number } | null) {
+  let invoiceUrl: string | null = null;
+  if (isOblioConfigured()) {
+    try {
+      const inv = await issueInvoice(session, {
+        name: `Constelații Familiale - ${pack?.name ?? "pachet de credite"}`,
+        amountCents: session.amount_total ?? 0,
+        currency: session.currency ?? "ron",
+      });
+      invoiceUrl = inv.url;
+      await prisma.packPurchase.update({
+        where: { stripeCheckoutSessionId: session.id },
+        data: { invoiceSeries: inv.series, invoiceNumber: inv.number, invoiceUrl: inv.url, invoiceError: null },
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("[oblio] factura:", session.id, message);
+      await prisma.packPurchase
+        .update({ where: { stripeCheckoutSessionId: session.id }, data: { invoiceError: message.slice(0, 500) } })
+        .catch(() => {});
+    }
+  }
+  const email = session.customer_details?.email ?? session.customer_email;
+  if (email) await sendPurchaseEmail(email, pack, appUrl(), invoiceUrl);
 }

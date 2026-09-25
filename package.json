@@ -24,6 +24,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-konva": "^19.2.5",
+    "resend": "^6.30.0",
     "stripe": "^22.4.0",
     "tz-lookup": "^6.1.25",
     "zod": "^4.4.3"

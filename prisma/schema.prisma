@@ -101,6 +101,11 @@ model PackPurchase {
   currency                String
   status                  String    @default("pending") // pending | paid
   completedAt             DateTime? @map("completed_at")
+  // factura Oblio, emisa automat dupa plata
+  invoiceSeries           String?   @map("invoice_series")
+  invoiceNumber           String?   @map("invoice_number")
+  invoiceUrl              String?   @map("invoice_url")
+  invoiceError            String?   @map("invoice_error")
   createdAt               DateTime  @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
