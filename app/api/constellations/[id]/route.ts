@@ -9,10 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 
   const { id } = await params;
-  const constellation = await prisma.savedConstellation.findUnique({
-    where: { id },
-    include: { payments: { select: { status: true } } },
-  });
+  const constellation = await prisma.savedConstellation.findUnique({ where: { id } });
 
   if (!constellation || constellation.userId !== session.user.id) {
     return NextResponse.json({ error: "Nu a fost găsită." }, { status: 404 });
@@ -23,6 +20,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     title: constellation.title,
     teaserText: constellation.teaserText,
     fullReport: constellation.fullReport,
-    paid: constellation.payments.some((p) => p.status === "paid"),
+    unlocked: constellation.fullReport !== null,
   });
 }

@@ -11,14 +11,8 @@ export default async function ConstellationDetailPage({ params }: { params: Prom
   const session = await auth();
   if (!session?.user) redirect(`/autentificare?callbackUrl=/cont/constelatii/${id}`);
 
-  const constellation = await prisma.savedConstellation.findUnique({
-    where: { id },
-    include: { payments: { select: { status: true } } },
-  });
-
+  const constellation = await prisma.savedConstellation.findUnique({ where: { id } });
   if (!constellation || constellation.userId !== session.user.id) notFound();
-
-  const paid = constellation.payments.some((p) => p.status === "paid");
 
   return (
     <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6 py-16">
@@ -37,7 +31,6 @@ export default async function ConstellationDetailPage({ params }: { params: Prom
           id={constellation.id}
           teaserText={constellation.teaserText}
           initialFullReport={constellation.fullReport as unknown as FullReport | null}
-          initialPaid={paid}
         />
       </div>
     </div>

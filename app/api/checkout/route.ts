@@ -2,56 +2,76 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
-import { getStripe } from "@/lib/stripe/client";
+import { getPack } from "@/lib/billing/packs";
+import { appUrl, getStripe, stripeConfigured } from "@/lib/stripe/client";
 
-const RequestSchema = z.object({ constellationId: z.string() });
+const RequestSchema = z.object({ pack: z.string() });
 
+/**
+ * Pornește plata unui pachet de credite.
+ *
+ * Prețul se ia din catalogul nostru (tabelul `packs`), nu din cererea
+ * clientului: altfel oricine ar putea cumpăra cinci credite cu un leu,
+ * schimbând suma trimisă aici. Un credit se cheltuiește mai târziu, separat,
+ * pe orice constelație — vezi /api/constellations/[id]/unlock.
+ */
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Trebuie să fii autentificat." }, { status: 401 });
   }
 
-  const body = await request.json();
+  if (!stripeConfigured()) {
+    return NextResponse.json({ error: "Plățile nu sunt încă active. Revino în curând." }, { status: 503 });
+  }
+
+  const body = await request.json().catch(() => null);
   const parsed = RequestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Date invalide." }, { status: 400 });
   }
 
-  const constellation = await prisma.savedConstellation.findUnique({
-    where: { id: parsed.data.constellationId },
-    include: { payments: { select: { status: true } } },
-  });
-
-  if (!constellation || constellation.userId !== session.user.id) {
-    return NextResponse.json({ error: "Constelația nu a fost găsită." }, { status: 404 });
+  const pack = await getPack(parsed.data.pack);
+  if (!pack) {
+    return NextResponse.json({ error: "Pachet inexistent." }, { status: 404 });
   }
-
-  if (constellation.payments.some((p) => p.status === "paid")) {
-    return NextResponse.json({ error: "Această constelație are deja raportul deblocat." }, { status: 409 });
-  }
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "payment",
-    line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
     customer_email: session.user.email ?? undefined,
-    metadata: { constellationId: constellation.id, userId: session.user.id },
-    success_url: `${appUrl}/cont/constelatii/${constellation.id}?plata=succes`,
-    cancel_url: `${appUrl}/cont/constelatii/${constellation.id}`,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "ron",
+          unit_amount: pack.priceCents,
+          product_data: {
+            name: `Constelații Familiale — ${pack.name}`,
+            description:
+              pack.credits === 1
+                ? "1 raport complet, pentru orice constelație."
+                : `${pack.credits} rapoarte complete, pentru orice constelații. Nu expiră.`,
+          },
+        },
+      },
+    ],
+    metadata: { userId: session.user.id, pack: pack.code },
+    success_url: `${appUrl()}/cont?plata=succes`,
+    cancel_url: `${appUrl()}/pachete?plata=anulata`,
   });
 
   if (!checkoutSession.url) {
     return NextResponse.json({ error: "Nu am putut crea sesiunea de plată." }, { status: 502 });
   }
 
-  await prisma.payment.create({
+  // Cumpărarea se înregistrează ca „pending" acum, ca webhook-ul să aibă ce
+  // confirma — fără acest rând, o plată reușită nu ar avea unde să aterizeze.
+  await prisma.packPurchase.create({
     data: {
       userId: session.user.id,
-      constellationId: constellation.id,
+      packCode: pack.code,
       stripeCheckoutSessionId: checkoutSession.id,
-      amountCents: checkoutSession.amount_total ?? 0,
+      amountCents: checkoutSession.amount_total ?? pack.priceCents,
       currency: checkoutSession.currency ?? "ron",
       status: "pending",
     },

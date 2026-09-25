@@ -17,6 +17,9 @@ export default function SiteHeader() {
         <Link href="/harta" className="transition-colors hover:text-foreground">
           Tablă
         </Link>
+        <Link href="/pachete" className="transition-colors hover:text-foreground">
+          Pachete
+        </Link>
       </nav>
 
       <UserNav />

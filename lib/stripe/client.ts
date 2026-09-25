@@ -11,3 +11,12 @@ export function getStripe(): Stripe {
   }
   return cachedClient;
 }
+
+/** Cheile Stripe lipsesc încă local (dev) — plata nu trebuie să blocheze restul aplicației. */
+export function stripeConfigured(): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY);
+}
+
+export function appUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+}

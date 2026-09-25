@@ -6,12 +6,18 @@ import { getUserAccountData } from "@/lib/db/queries";
 
 const dateFormatter = new Intl.DateTimeFormat("ro-RO", { day: "numeric", month: "long", year: "numeric" });
 
-export default async function ContPage() {
+export default async function ContPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plata?: string }>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/autentificare?callbackUrl=/cont");
 
   const account = await getUserAccountData(session.user.id);
   if (!account) redirect("/autentificare?callbackUrl=/cont");
+
+  const { plata } = await searchParams;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const referralUrl = `${appUrl}/inregistrare?ref=${account.referralCode}`;
@@ -26,6 +32,25 @@ export default async function ContPage() {
             {account.name} · {account.email}
           </p>
         </header>
+
+        {plata === "succes" && (
+          <p className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-center text-sm text-accent">
+            Plată confirmată — creditele sunt în cont.
+          </p>
+        )}
+
+        <section className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div>
+            <p className="text-sm text-foreground/60">Credite pentru rapoarte complete</p>
+            <p className="text-2xl font-semibold text-accent">{account.wallet?.creditsBalance ?? 0}</p>
+          </div>
+          <Link
+            href="/pachete"
+            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-accent-soft"
+          >
+            Cumpără credite
+          </Link>
+        </section>
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
           <h2 className="mb-2 text-lg font-semibold">Recomandă un prieten</h2>
@@ -59,7 +84,7 @@ export default async function ContPage() {
           {account.constellations.length > 0 ? (
             <ul className="flex flex-col gap-3">
               {account.constellations.map((c) => {
-                const unlocked = c.payments.some((p) => p.status === "paid");
+                const unlocked = c.fullReport !== null;
                 return (
                   <li key={c.id}>
                     <Link

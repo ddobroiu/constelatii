@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import UnlockPanel from "./UnlockPanel";
+import FullReportView from "./FullReportView";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
 import type { NatalChart } from "@/lib/astrology/types";
+import type { FullReport } from "@/lib/claude/schema";
 
 interface InterpretationPanelProps {
   board: BoardConfig;
@@ -15,7 +18,6 @@ interface InterpretationPanelProps {
 
 type TeaserStatus = "idle" | "loading" | "error" | "done";
 type SaveStatus = "idle" | "saving" | "done" | "error";
-type CheckoutStatus = "idle" | "loading" | "error";
 
 export default function InterpretationPanel({ board, questionnaire, natalChart }: InterpretationPanelProps) {
   const { data: session, status: sessionStatus } = useSession();
@@ -26,9 +28,7 @@ export default function InterpretationPanel({ board, questionnaire, natalChart }
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [constellationId, setConstellationId] = useState<string | null>(null);
-
-  const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStatus>("idle");
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [fullReport, setFullReport] = useState<FullReport | null>(null);
 
   const canInterpret = board.figures.length >= 2 && questionnaire !== null;
 
@@ -75,28 +75,6 @@ export default function InterpretationPanel({ board, questionnaire, natalChart }
       .catch(() => setSaveStatus("error"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teaserStatus, teaser, session]);
-
-  async function unlockFullReport() {
-    if (!constellationId) return;
-    setCheckoutStatus("loading");
-    setCheckoutError(null);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ constellationId }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Nu am putut porni plata.");
-      }
-      const data: { url: string } = await res.json();
-      window.location.href = data.url;
-    } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : "A apărut o eroare neașteptată.");
-      setCheckoutStatus("error");
-    }
-  }
 
   return (
     <div className="w-full max-w-2xl">
@@ -155,23 +133,13 @@ export default function InterpretationPanel({ board, questionnaire, natalChart }
               {saveStatus === "error" && (
                 <p className="text-sm text-red-300/80">Nu am putut salva constelația. Încearcă din nou.</p>
               )}
-              {constellationId && (
-                <>
-                  <button
-                    type="button"
-                    onClick={unlockFullReport}
-                    disabled={checkoutStatus === "loading"}
-                    className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-background transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-30"
-                  >
-                    {checkoutStatus === "loading" ? "Se deschide plata…" : "Deblochează raportul complet"}
-                  </button>
-                  {checkoutStatus === "error" && checkoutError && (
-                    <p className="text-sm text-red-300/80">{checkoutError}</p>
-                  )}
-                </>
+              {constellationId && !fullReport && (
+                <UnlockPanel constellationId={constellationId} onUnlocked={setFullReport} />
               )}
             </div>
           )}
+
+          {fullReport && <FullReportView report={fullReport} />}
         </div>
       )}
     </div>

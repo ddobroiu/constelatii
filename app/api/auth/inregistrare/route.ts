@@ -44,6 +44,9 @@ export async function POST(request: Request) {
           name: parsed.data.name,
           referralCode: generateReferralCode(),
           referredById,
+          // Portofel gol de la început — fără el, ruta de deblocare
+          // (`/api/constellations/[id]/unlock`) n-ar avea ce credita.
+          wallet: { create: {} },
         },
         select: { id: true, email: true, name: true },
       });

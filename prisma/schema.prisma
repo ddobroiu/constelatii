@@ -20,7 +20,9 @@ model User {
   referrals  User[] @relation("Referrals")
 
   constellations SavedConstellation[]
-  payments       Payment[]
+  wallet         Wallet?
+  packPurchases  PackPurchase[]
+  reportUnlocks  ReportUnlock[]
 
   @@map("users")
 }
@@ -33,30 +35,94 @@ model SavedConstellation {
   questionnaire Json
   natalChart    Json?    @map("natal_chart")
   teaserText    String?  @map("teaser_text")
+  // Prezent = raportul e deblocat. Sursa de adevăr pentru "unlocked", nu un
+  // status separat: dacă există conținutul, e deblocat, punct.
   fullReport    Json?    @map("full_report")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payments Payment[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportUnlock ReportUnlock?
 
   @@map("saved_constellations")
 }
 
-model Payment {
+/**
+ * Catalogul pachetelor cumpărabile. Prețul stă aici, nu în cererea
+ * clientului: altfel oricine ar putea cumpăra zece credite cu un leu,
+ * schimbând suma trimisă către /api/checkout.
+ */
+model Pack {
+  code        String   @id
+  name        String
+  priceCents  Int      @map("price_cents")
+  // Câte deblocări de raport complet aduce pachetul.
+  credits     Int
+  sortOrder   Int      @default(0) @map("sort_order")
+  active      Boolean  @default(true)
+
+  purchases PackPurchase[]
+
+  @@map("packs")
+}
+
+/**
+ * Ce are un cont, acum: credite necheltuite. Nu expiră, nu se resetează.
+ *
+ * Fără plafon de cost separat, spre deosebire de tiparementale: acolo o
+ * "ședință" avea cost variabil (până la 25 de replici plus extracții), aici
+ * un credit cumpără exact un apel Claude cu preț fix
+ * (generateFullReport, o dată per raport) — creditele înseși sunt plafonul.
+ */
+model Wallet {
+  id             String   @id @default(uuid())
+  userId         String   @unique @map("user_id")
+  creditsBalance Int      @default(0) @map("credits_balance")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+/**
+ * O plată Stripe pentru un pachet. `stripeCheckoutSessionId` e unic, ca
+ * același webhook retrimis de Stripe să nu crediteze portofelul de două ori
+ * (vezi `creditPurchase` din lib/billing/packs.ts).
+ */
+model PackPurchase {
   id                      String    @id @default(uuid())
   userId                  String    @map("user_id")
-  constellationId         String    @map("constellation_id")
+  packCode                String    @map("pack_code")
   stripeCheckoutSessionId String    @unique @map("stripe_checkout_session_id")
   stripePaymentIntentId   String?   @map("stripe_payment_intent_id")
   amountCents             Int       @map("amount_cents")
   currency                String
-  status                  String    @default("pending") // pending | paid | failed | refunded
-  unlockedAt              DateTime? @map("unlocked_at")
+  status                  String    @default("pending") // pending | paid
+  completedAt             DateTime? @map("completed_at")
   createdAt               DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pack Pack @relation(fields: [packCode], references: [code])
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("pack_purchases")
+}
+
+/**
+ * Cheltuirea unui credit pe o constelație anume. Unic per constelație: o
+ * constelație se deblochează o singură dată, nu se plătește de două ori.
+ */
+model ReportUnlock {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  constellationId String   @unique @map("constellation_id")
+  creditsSpent    Int      @default(1) @map("credits_spent")
+  unlockedAt      DateTime @default(now()) @map("unlocked_at")
 
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   constellation SavedConstellation @relation(fields: [constellationId], references: [id], onDelete: Cascade)
 
-  @@map("payments")
+  @@map("report_unlocks")
 }
