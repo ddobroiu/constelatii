@@ -11,6 +11,8 @@ const CreateSchema = z.object({
   questionnaire: QuestionnaireAnswersSchema,
   natalChart: NatalChartSchema.nullable().optional(),
   teaserText: z.string().optional(),
+  // consimtamantul explicit (art. 9 GDPR), dat inainte de interpretare
+  aiConsent: z.literal(true),
 });
 
 export async function POST(request: Request) {
@@ -33,6 +35,7 @@ export async function POST(request: Request) {
       questionnaire: parsed.data.questionnaire,
       natalChart: (parsed.data.natalChart as unknown as object) ?? undefined,
       teaserText: parsed.data.teaserText,
+      aiConsentAt: new Date(),
     },
     select: { id: true },
   });

@@ -10,12 +10,20 @@ const RequestSchema = z.object({
   board: BoardConfigSchema,
   questionnaire: QuestionnaireAnswersSchema,
   natalChart: NatalChartSchema.nullable().optional(),
+  // consimtamantul explicit (art. 9 GDPR) pentru trimiterea datelor catre furnizorul AI
+  aiConsent: z.literal(true),
 });
 
 export async function POST(request: Request) {
   const body = await request.json();
   const parsed = RequestSchema.safeParse(body);
 
+  if (!parsed.success && (body as { aiConsent?: unknown } | null)?.aiConsent !== true) {
+    return NextResponse.json(
+      { error: "Pentru interpretare este nevoie de acordul tău pentru prelucrarea datelor prin AI." },
+      { status: 400 },
+    );
+  }
   if (!parsed.success) {
     return NextResponse.json({ error: "Date invalide.", details: parsed.error.flatten() }, { status: 400 });
   }

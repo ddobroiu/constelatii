@@ -38,19 +38,30 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
   return body.data as T;
 }
 
-// The company's own VAT setting in Oblio (e.g. a non-VAT payer has only its
-// exempt rate), so invoices follow the company configuration instead of a
-// hardcoded rate.
+// The operator (CULOAREA DIN VIATA SA SRL) is NOT a VAT payer: invoices must not carry a positive VAT
+// rate. OBLIO_VAT_NAME (optional) forces the rate name to send; otherwise we use the company's own
+// default rate from Oblio only if it is 0%, and omit vatName entirely if it is not (so a
+// misconfigured default like "Normala" 21% never reaches an invoice). The amount invoiced is always
+// the amount paid (vatIncluded: 1, no VAT split).
 let vatRate: { name: string } | null | undefined;
 
 async function defaultVatRate(): Promise<{ name: string } | null> {
   if (vatRate !== undefined) return vatRate;
+  if (env.OBLIO_VAT_NAME) {
+    vatRate = { name: env.OBLIO_VAT_NAME };
+    return vatRate;
+  }
   try {
-    const rates = await call<{ name: string; percent?: number; default?: boolean }[]>(
+    const rates = await call<{ name: string; percent?: number | string; default?: boolean }[]>(
       `/nomenclature/vat_rates?cif=${encodeURIComponent(env.OBLIO_CIF_FIRMA!)}`,
     );
     const pick = rates.find((r) => r.default) ?? rates[0];
-    vatRate = pick ? { name: pick.name } : null;
+    if (pick && Number(pick.percent ?? 0) > 0) {
+      console.warn(`[oblio] default VAT rate "${pick.name}" is ${pick.percent}% — ignored (company is not a VAT payer)`);
+      vatRate = null;
+    } else {
+      vatRate = pick ? { name: pick.name } : null;
+    }
   } catch (error: unknown) {
     console.error("[oblio] vat rates:", error);
     vatRate = null;

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ConstellationMark from "./ConstellationMark";
 import { PILLARS } from "@/lib/seo/pillars";
+import { CookieSettingsLink } from "./CookieConsent";
+import { ANPC_SAL_URL, ANPC_URL, LEGAL_LINKS, OPERATOR, OPERATOR_ADDRESS_LINE } from "@/lib/legal";
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
@@ -47,10 +49,45 @@ export default function SiteFooter() {
             </Link>
           </div>
         </div>
+
+        <div className="flex flex-col gap-3">
+          <span className="text-xs font-medium uppercase tracking-wide text-foreground/40">Legal</span>
+          <div className="flex flex-col items-start gap-2 text-sm text-foreground/60">
+            <Link href={LEGAL_LINKS.terms} className="transition-colors hover:text-foreground">
+              Termeni și condiții
+            </Link>
+            <Link href={LEGAL_LINKS.privacy} className="transition-colors hover:text-foreground">
+              Politica de confidențialitate
+            </Link>
+            <Link href={LEGAL_LINKS.cookies} className="transition-colors hover:text-foreground">
+              Politica de cookies
+            </Link>
+            <CookieSettingsLink className="text-left transition-colors hover:text-foreground" />
+            <Link href={LEGAL_LINKS.contact} className="transition-colors hover:text-foreground">
+              Contact
+            </Link>
+            <a href={ANPC_SAL_URL} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
+              ANPC – SAL (Soluționarea alternativă a litigiilor)
+            </a>
+            <a href={ANPC_URL} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
+              ANPC
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-8 w-full max-w-5xl text-xs leading-relaxed text-foreground/40">
+        <p>
+          Site operat de {OPERATOR.name} · CUI {OPERATOR.cui} ({OPERATOR.vatStatus}) · Nr. Reg. Com. {OPERATOR.regCom}{" "}
+          · EUID {OPERATOR.euid} · Sediu: {OPERATOR_ADDRESS_LINE} ·{" "}
+          <a href={`mailto:${OPERATOR.email}`} className="hover:text-foreground">
+            {OPERATOR.email}
+          </a>
+        </p>
       </div>
 
       <div className="mx-auto mt-8 flex w-full max-w-5xl flex-col gap-2 border-t border-white/5 pt-6 text-xs text-foreground/40 sm:flex-row sm:justify-between">
-        <p>Nu înlocuiește terapia sau consilierea psihologică — este un instrument de auto-reflecție.</p>
+        <p>Nu este terapie psihologică sau medicală și nu înlocuiește un specialist — este un instrument de auto-reflecție.</p>
         <p>© {year} Constelații Familiale</p>
       </div>
     </footer>

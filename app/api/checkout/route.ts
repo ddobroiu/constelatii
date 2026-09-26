@@ -4,8 +4,12 @@ import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { getPack } from "@/lib/billing/packs";
 import { appUrl, getStripe, stripeConfigured } from "@/lib/stripe/client";
+import { CONSENT_COOKIE, parseConsent, readCookieHeader } from "@/lib/consent";
+import { LEGAL_VERSION } from "@/lib/legal";
 
-const RequestSchema = z.object({ pack: z.string() });
+// `consent`: bifa obligatorie de pe /pachete (furnizare imediata + pierderea dreptului de retragere,
+// OUG 34/2014 art. 16 lit. a si m). Fara ea nu pornim plata.
+const RequestSchema = z.object({ pack: z.string(), consent: z.literal(true) });
 
 /**
  * Pornește plata unui pachet de credite.
@@ -37,8 +41,17 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const parsed = RequestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Date invalide." }, { status: 400 });
+    const missingConsent = (body as { consent?: unknown } | null)?.consent !== true;
+    return NextResponse.json(
+      {
+        error: missingConsent
+          ? "Trebuie să bifezi acordul cu Termenii și solicitarea furnizării imediate înainte de plată."
+          : "Date invalide.",
+      },
+      { status: 400 },
+    );
   }
+  const consentAt = new Date();
 
   const pack = await getPack(parsed.data.pack);
   if (!pack) {
@@ -46,8 +59,11 @@ export async function POST(request: Request) {
   }
 
   // Contul Stripe „Applications” e comun aplicatiilor: eticheta de proiect separa platile in mydashboard
-  const vid = readCookie(request, "_md_vid");
+  // ID-ul de vizitator mydashboard se trimite doar cu acordul pentru statistici (bannerul de cookies)
+  const cookieConsent = parseConsent(readCookieHeader(request.headers.get("cookie"), CONSENT_COOKIE));
+  const vid = cookieConsent?.analytics ? readCookie(request, "_md_vid") : null;
   const tag = { project: "constelatii", ...(vid && { md_vid: vid }) };
+  const legal = { consent_at: consentAt.toISOString(), terms_version: LEGAL_VERSION };
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "payment",
     customer_email: session.user.email ?? undefined,
@@ -71,7 +87,7 @@ export async function POST(request: Request) {
         },
       },
     ],
-    metadata: { ...tag, userId: session.user.id, pack: pack.code },
+    metadata: { ...tag, ...legal, userId: session.user.id, pack: pack.code },
     success_url: `${appUrl()}/cont?plata=succes`,
     cancel_url: `${appUrl()}/pachete?plata=anulata`,
   });
@@ -90,6 +106,8 @@ export async function POST(request: Request) {
       amountCents: checkoutSession.amount_total ?? pack.priceCents,
       currency: checkoutSession.currency ?? "ron",
       status: "pending",
+      consentAt,
+      termsVersion: LEGAL_VERSION,
     },
   });
 

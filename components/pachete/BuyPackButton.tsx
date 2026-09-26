@@ -3,16 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useCheckoutConsent } from "./CheckoutConsent";
 
 export default function BuyPackButton({ code, label }: { code: string; label: string }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const consent = useCheckoutConsent();
 
   async function buy() {
     if (status !== "loading" && !session?.user) {
       router.push("/autentificare?callbackUrl=/pachete");
+      return;
+    }
+    if (!consent.accepted) {
+      consent.setShowError(true);
       return;
     }
 
@@ -22,7 +28,7 @@ export default function BuyPackButton({ code, label }: { code: string; label: st
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pack: code }),
+        body: JSON.stringify({ pack: code, consent: true }),
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? "Nu am putut porni plata.");

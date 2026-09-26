@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { LEGAL_LINKS } from "@/lib/legal";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -13,18 +14,23 @@ export default function SignupForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!acceptTerms) {
+      setError("Pentru a crea contul trebuie să accepți Termenii și condițiile.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/inregistrare", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, ref }),
+        body: JSON.stringify({ name, email, password, ref, acceptTerms }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -81,6 +87,27 @@ export default function SignupForm() {
             className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm outline-none focus:border-accent"
           />
         </div>
+
+        <label className="flex items-start gap-2 text-xs text-foreground/60">
+          <input
+            type="checkbox"
+            checked={acceptTerms}
+            onChange={(e) => setAcceptTerms(e.target.checked)}
+            required
+            className="mt-0.5 shrink-0 accent-accent"
+          />
+          <span>
+            Am cel puțin 18 ani și sunt de acord cu{" "}
+            <Link href={LEGAL_LINKS.terms} target="_blank" className="text-accent hover:underline">
+              Termenii și condițiile
+            </Link>
+            . Am citit{" "}
+            <Link href={LEGAL_LINKS.privacy} target="_blank" className="text-accent hover:underline">
+              Politica de confidențialitate
+            </Link>
+            .
+          </span>
+        </label>
 
         {error && <p className="text-sm text-red-300/80">{error}</p>}
 

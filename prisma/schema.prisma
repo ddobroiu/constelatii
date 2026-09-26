@@ -13,6 +13,9 @@ model User {
   name         String?
   referralCode String   @unique @map("referral_code")
   referredById String?  @map("referred_by_id")
+  // acceptarea Termenilor la inregistrare
+  termsAcceptedAt DateTime? @map("terms_accepted_at")
+  termsVersion    String?   @map("terms_version")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -38,6 +41,8 @@ model SavedConstellation {
   // Prezent = raportul e deblocat. Sursa de adevăr pentru "unlocked", nu un
   // status separat: dacă există conținutul, e deblocat, punct.
   fullReport    Json?    @map("full_report")
+  // consimtamantul explicit (art. 9 GDPR) pentru prelucrarea prin AI a datelor constelatiei
+  aiConsentAt   DateTime? @map("ai_consent_at")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
@@ -106,6 +111,9 @@ model PackPurchase {
   invoiceNumber           String?   @map("invoice_number")
   invoiceUrl              String?   @map("invoice_url")
   invoiceError            String?   @map("invoice_error")
+  // acordul pentru furnizarea imediata + pierderea dreptului de retragere (OUG 34/2014 art. 16 lit. a si m)
+  consentAt               DateTime? @map("consent_at")
+  termsVersion            String?   @map("terms_version")
   createdAt               DateTime  @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -4,17 +4,26 @@ import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { generateReferralCode } from "@/lib/auth/referralCode";
+import { LEGAL_VERSION } from "@/lib/legal";
 
 const SignupSchema = z.object({
   name: z.string().min(1).max(100),
   email: z.string().email(),
   password: z.string().min(8, "Parola trebuie să aibă minimum 8 caractere"),
   ref: z.string().optional(),
+  // bifa obligatorie din formular: acceptarea Termenilor (si varsta minima de 18 ani)
+  acceptTerms: z.literal(true),
 });
 
 export async function POST(request: Request) {
   const body = await request.json();
   const parsed = SignupSchema.safeParse(body);
+  if (!parsed.success && (body as { acceptTerms?: unknown } | null)?.acceptTerms !== true) {
+    return NextResponse.json(
+      { error: "Pentru a crea contul trebuie să accepți Termenii și condițiile." },
+      { status: 400 },
+    );
+  }
   if (!parsed.success) {
     return NextResponse.json({ error: "Date invalide.", details: parsed.error.flatten() }, { status: 400 });
   }
@@ -44,6 +53,8 @@ export async function POST(request: Request) {
           name: parsed.data.name,
           referralCode: generateReferralCode(),
           referredById,
+          termsAcceptedAt: new Date(),
+          termsVersion: LEGAL_VERSION,
           // Portofel gol de la început — fără el, ruta de deblocare
           // (`/api/constellations/[id]/unlock`) n-ar avea ce credita.
           wallet: { create: {} },
