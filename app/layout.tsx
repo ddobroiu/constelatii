@@ -7,6 +7,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import CookieConsent from "@/components/layout/CookieConsent";
 import { organizationJsonLd } from "@/lib/legal";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Constelații Familiale",
   description:
     "Descoperă dinamica relațiilor tale de familie printr-o constelație interactivă, interpretată cu ajutorul astrologiei și al inteligenței artificiale.",
@@ -53,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(process.env.NEXT_PUBLIC_APP_URL ?? "https://constelatii.com")) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(SITE_URL)) }}
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">

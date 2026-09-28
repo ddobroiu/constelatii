@@ -15,6 +15,11 @@ COPY . .
 # connection needed, just needs a value present) — passed in as a build arg.
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
+# NEXT_PUBLIC_* are inlined into the bundle at build time (server code too):
+# robots.txt, sitemap.xml, metadataBase and Stripe return URLs read it. The
+# runtime env_file comes too late, so it has to be present here.
+ARG NEXT_PUBLIC_APP_URL=https://constelatii.com
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 RUN npx prisma generate
 RUN npm run build
 

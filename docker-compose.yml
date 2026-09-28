@@ -7,6 +7,9 @@ services:
       context: .
       args:
         DATABASE_URL: ${DATABASE_URL}
+        # Fixed on purpose: compose would otherwise interpolate a dev value
+        # (localhost) from .env into the production bundle.
+        NEXT_PUBLIC_APP_URL: https://constelatii.com
     restart: unless-stopped
     ports:
       - "3006:3000"

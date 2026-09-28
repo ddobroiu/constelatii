@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { SITE_URL } from "@/lib/site";
 
 let cachedClient: Stripe | null = null;
 
@@ -18,5 +19,5 @@ export function stripeConfigured(): boolean {
 }
 
 export function appUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  return SITE_URL;
 }

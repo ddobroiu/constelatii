@@ -43,20 +43,33 @@ export const ANPC_SAL_URL = "https://anpc.ro/ce-este-sal/";
 export function organizationJsonLd(baseUrl: string) {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: SITE_NAME,
-    legalName: OPERATOR.name,
-    url: baseUrl,
-    email: OPERATOR.email,
-    taxID: OPERATOR.cui,
-    identifier: OPERATOR.euid,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: OPERATOR.address.street,
-      addressLocality: OPERATOR.address.locality,
-      addressRegion: "Buzău",
-      postalCode: OPERATOR.address.postalCode,
-      addressCountry: OPERATOR.address.countryCode,
-    },
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${baseUrl}/#organization`,
+        name: SITE_NAME,
+        legalName: OPERATOR.name,
+        url: baseUrl,
+        email: OPERATOR.email,
+        taxID: OPERATOR.cui,
+        identifier: OPERATOR.euid,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: OPERATOR.address.street,
+          addressLocality: OPERATOR.address.locality,
+          addressRegion: "Buzău",
+          postalCode: OPERATOR.address.postalCode,
+          addressCountry: OPERATOR.address.countryCode,
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website`,
+        url: baseUrl,
+        name: SITE_NAME,
+        inLanguage: "ro-RO",
+        publisher: { "@id": `${baseUrl}/#organization` },
+      },
+    ],
   };
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import ReferralLink from "@/components/account/ReferralLink";
 import { auth } from "@/lib/auth/auth";
 import { getUserAccountData } from "@/lib/db/queries";
+import { SITE_URL } from "@/lib/site";
 
 const dateFormatter = new Intl.DateTimeFormat("ro-RO", { day: "numeric", month: "long", year: "numeric" });
 
@@ -19,7 +20,7 @@ export default async function ContPage({
 
   const { plata } = await searchParams;
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appUrl = SITE_URL;
   const referralUrl = `${appUrl}/inregistrare?ref=${account.referralCode}`;
 
   return (

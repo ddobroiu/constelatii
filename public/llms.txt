@@ -1,0 +1,39 @@
+# Constelații Familiale
+
+> Constelații Familiale (constelatii.com) este o aplicație web în limba română de auto-reflecție pentru oamenii din România care vor să înțeleagă dinamica relațiilor din familia lor. Utilizatorul completează un chestionar, își așază familia pe o tablă interactivă (cine e aproape, cine e departe, încotro privește fiecare) și primește o interpretare generată cu AI, pe metoda constelațiilor familiale, îmbogățită cu harta natală astrologică. Nu este terapie psihologică sau medicală și nu înlocuiește un specialist.
+
+Cum funcționează: (1) chestionarul și datele de naștere; (2) tabla interactivă, pe care adaugi figuri (tu, părinți, partener, copii, frați, bunici) și simboluri între ele; (3) interpretarea. Interpretarea inițială este gratuită. Un credit deblochează raportul complet al unei constelații, pe orice temă (bani, relații, rolul de părinte etc.); creditele se cumpără în pachete, cu plată unică, și nu expiră. Prețurile sunt afișate pe pagina de pachete; furnizorul nu este plătitor de TVA, deci prețul afișat este prețul final.
+
+## Aplicația
+
+- [Pagina principală](https://constelatii.com/): ce este și cum începi
+- [Chestionar](https://constelatii.com/chestionar): primul pas, întrebările despre situația ta și datele de naștere
+- [Tabla interactivă](https://constelatii.com/harta): așezarea figurilor familiei și cererea interpretării
+- [Pachete de credite](https://constelatii.com/pachete): pachetele care deblochează rapoartele complete
+
+## Articole
+
+- [Toate articolele](https://constelatii.com/articole): ghiduri despre constelații familiale, blocaje și astrologie
+- [Blocaje în relații](https://constelatii.com/blocaje-relatii): de ce se repetă aceleași tipare, relație după relație
+- [Blocaje financiare](https://constelatii.com/blocaje-financiare): originea sistemică a problemelor cu banii
+- [Horoscop și astrologie](https://constelatii.com/horoscop-astrologie): cum se citește o hartă natală
+- [Terapie și autocunoaștere](https://constelatii.com/terapie-autocunoastere): ce sunt constelațiile familiale și cum completează terapia
+- [Compatibilitate în cuplu](https://constelatii.com/compatibilitate-cuplu): ce arată sinastria astrologică
+- [Blocaje părinți-copii](https://constelatii.com/blocaje-parinti-copii): ordinea iubirii în familie
+- [Pierderi și doliu în familie](https://constelatii.com/pierderi-doliu-familie): durerea nepurtată și cine o duce mai departe
+- [Anxietate și stimă de sine](https://constelatii.com/anxietate-stima-de-sine): anxietatea ca rol moștenit din familie
+- [De ce nu atrag bani](https://constelatii.com/de-ce-nu-atrag-bani): ce te împiedică să primești
+- [De ce nu atrag relații](https://constelatii.com/de-ce-nu-atrag-relatii): când relațiile nu se întâmplă deloc
+- [Meditație și practică interioară](https://constelatii.com/meditatie): constelația ca meditație activă
+- [Constelații familiale în județul tău](https://constelatii.com/constelatii-familiale/bucuresti): pagini pe județe (exemplu: București)
+
+## Informații legale
+
+- [Contact](https://constelatii.com/contact): datele operatorului și adresa de e-mail
+- [Termeni și condiții](https://constelatii.com/termeni-si-conditii): condițiile de utilizare și cumpărare
+- [Politica de confidențialitate](https://constelatii.com/politica-de-confidentialitate): cum sunt prelucrate datele, inclusiv cele sensibile
+- [Politica de cookies](https://constelatii.com/politica-cookies): cookie-urile folosite pe site
+
+## Operator
+
+- CULOAREA DIN VIAȚA SA S.R.L., CUI 44820819. Contact exclusiv pe email: contact@constelatii.com

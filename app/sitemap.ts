@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { COUNTIES } from "@/lib/seo/counties";
 import { PILLARS } from "@/lib/seo/pillars";
-
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+import { SITE_URL as BASE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["/", "/chestionar", "/harta", "/articole", "/pachete", "/contact", "/termeni-si-conditii", "/politica-de-confidentialitate", "/politica-cookies"].map((path) => ({
