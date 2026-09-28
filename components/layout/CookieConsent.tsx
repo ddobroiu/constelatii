@@ -224,7 +224,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => save({ analytics: false, marketing: false })}
-            className="rounded-full border border-white/10 px-5 py-2 text-foreground/80 transition-colors hover:bg-white/10"
+            className="rounded-full bg-accent px-5 py-2 font-medium text-background transition-colors hover:bg-accent-soft"
           >
             Refuză
           </button>

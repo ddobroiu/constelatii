@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import GaPurchase from "@/components/account/GaPurchase";
 import ReferralLink from "@/components/account/ReferralLink";
 import { auth } from "@/lib/auth/auth";
+import { prisma } from "@/lib/db/prisma";
 import { getUserAccountData } from "@/lib/db/queries";
 import { SITE_URL } from "@/lib/site";
 
@@ -10,7 +12,7 @@ const dateFormatter = new Intl.DateTimeFormat("ro-RO", { day: "numeric", month: 
 export default async function ContPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plata?: string }>;
+  searchParams: Promise<{ plata?: string; sid?: string }>;
 }) {
   const session = await auth();
   if (!session?.user) redirect("/autentificare?callbackUrl=/cont");
@@ -18,7 +20,16 @@ export default async function ContPage({
   const account = await getUserAccountData(session.user.id);
   if (!account) redirect("/autentificare?callbackUrl=/cont");
 
-  const { plata } = await searchParams;
+  const { plata, sid } = await searchParams;
+
+  // Pentru evenimentul GA4 `purchase`: cumpărarea din sesiunea Stripe din URL, doar dacă e a acestui cont
+  const paid =
+    plata === "succes" && typeof sid === "string" && sid
+      ? await prisma.packPurchase.findFirst({
+          where: { stripeCheckoutSessionId: sid, userId: session.user.id },
+          select: { id: true, packCode: true, amountCents: true, currency: true },
+        })
+      : null;
 
   const appUrl = SITE_URL;
   const referralUrl = `${appUrl}/inregistrare?ref=${account.referralCode}`;
@@ -38,6 +49,14 @@ export default async function ContPage({
           <p className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-center text-sm text-accent">
             Plată confirmată — creditele sunt în cont.
           </p>
+        )}
+        {paid && (
+          <GaPurchase
+            transactionId={paid.id}
+            value={paid.amountCents / 100}
+            currency={paid.currency.toUpperCase()}
+            pack={paid.packCode}
+          />
         )}
 
         <section className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">

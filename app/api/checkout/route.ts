@@ -88,7 +88,7 @@ export async function POST(request: Request) {
       },
     ],
     metadata: { ...tag, ...legal, userId: session.user.id, pack: pack.code },
-    success_url: `${appUrl()}/cont?plata=succes`,
+    success_url: `${appUrl()}/cont?plata=succes&sid={CHECKOUT_SESSION_ID}`,
     cancel_url: `${appUrl()}/pachete?plata=anulata`,
   });
 
