@@ -1,5 +1,7 @@
 import { Resend } from "resend";
 
+import { alerta } from "@/lib/alerts";
+
 // E-mailurile aplicatiei (Resend). Fara cheie sau expeditor configurate nu trimitem nimic:
 // plata si creditele merg oricum, e-mailul e doar informare.
 export async function sendPurchaseEmail(
@@ -18,7 +20,7 @@ export async function sendPurchaseEmail(
     ? `<p style="color:#444">Factura o găsești aici: <a href="${invoiceUrl}">${invoiceUrl}</a></p>`
     : `<p style="color:#444">Factura îți vine în scurt timp pe această adresă.</p>`;
   try {
-    await new Resend(key).emails.send({
+    const { error } = await new Resend(key).emails.send({
       from,
       to,
       subject: pack ? `Ai activat „${pack.name}”` : "Plata a fost confirmată",
@@ -28,7 +30,10 @@ export async function sendPurchaseEmail(
         <p><a href="${appUrl}/cont" style="display:inline-block;background:#6d28d9;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Deschide contul</a></p>
       </div>`,
     });
+    // Resend nu arunca la un e-mail refuzat: intoarce { error }
+    if (error) throw new Error(`${error.name}: ${error.message}`);
   } catch (error: unknown) {
     console.error("[email] confirmare plata:", error);
+    void alerta("error", "resend", `Constelatii Familiale: e-mailul de confirmare a plății nu a plecat: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
