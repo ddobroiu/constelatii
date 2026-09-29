@@ -70,6 +70,14 @@ const ROWS: { name: string; category: string; provider: string; purpose: string;
     purpose: "Verifică dacă browserul acceptă cookies pentru TikTok Pixel.",
     duration: "Aproximativ 13 luni",
   },
+  {
+    name: "tt_ttclid",
+    category: "Marketing",
+    provider: "Constelații Familiale (pentru TikTok)",
+    purpose:
+      "Reține clicul pe o reclamă TikTok (doar când vii dintr-o reclamă), ca plata să poată fi atribuită reclamei.",
+    duration: "30 de zile",
+  },
 ];
 
 export default function CookiesPage() {
@@ -94,7 +102,11 @@ export default function CookiesPage() {
         <li>
           <strong>Marketing / reclame</strong> — măsurarea eficienței reclamelor și afișarea de reclame relevante
           (TikTok Pixel). Se încarcă doar dacă le accepți și niciodată pe paginile de cont, autentificare sau plată
-          (cu excepția confirmării unei plăți, când transmitem doar evenimentul de plată, fără date personale).
+          (cu excepția confirmării unei plăți, când pixelul transmite doar evenimentul de plată, fără date personale).
+          Tot doar cu acest acord, după o plată confirmată, serverul nostru trimite direct la TikTok (Events API)
+          valoarea, moneda, pachetul și identificatorul comenzii, e-mailul, telefonul și identificatorul contului doar
+          ca amprentă criptografică (SHA-256), adresa IP, browserul și identificatorii _ttp / tt_ttclid; fără acord nu
+          trimitem nimic.
           Acordul pentru această categorie controlează și semnalele Google Consent Mode (ad_storage, ad_user_data,
           ad_personalization).
         </li>
@@ -136,7 +148,7 @@ export default function CookiesPage() {
         Îți poți modifica sau retrage oricând consimțământul din{" "}
         <CookieSettingsLink className="text-accent underline-offset-2 hover:underline" /> (link disponibil și în
         subsolul fiecărei pagini). La retragere, ștergem cookies de statistici și de marketing (_ttp,
-        _tt_enable_cookie) setate pe domeniul nostru și reîncărcăm pagina fără ele. Poți șterge cookies și din setările browserului.
+        _tt_enable_cookie, tt_ttclid) setate pe domeniul nostru și reîncărcăm pagina fără ele. Poți șterge cookies și din setările browserului.
       </p>
     </LegalPage>
   );

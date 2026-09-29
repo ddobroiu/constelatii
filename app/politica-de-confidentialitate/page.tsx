@@ -71,7 +71,10 @@ export default function ConfidentialitatePage() {
         <li>
           <strong>Marketing / reclame</strong> — identificatori de cookie și de browser, paginile vizitate și
           evenimente precum vizualizarea pachetelor, începerea plății și plata finalizată (valoare, monedă,
-          identificatorul comenzii, fără nume sau e-mail), prin TikTok Pixel. Scop: măsurarea eficienței reclamelor
+          identificatorul comenzii), prin TikTok Pixel. După o plată confirmată, serverul nostru trimite evenimentul de
+          plată și direct la TikTok (Events API): valoarea, moneda, pachetul și identificatorul comenzii, e-mailul,
+          telefonul și identificatorul contului doar ca amprentă criptografică (SHA-256), adresa IP, browserul și
+          identificatorii _ttp / ttclid; fără acord nu se trimite nimic. Scop: măsurarea eficienței reclamelor
           și afișarea de reclame relevante. Temei: consimțământul tău (art. 6 alin. (1) lit. a), exprimat în
           bannerul de cookies la categoria „Marketing / reclame”; fără acord pixelul nu se încarcă, iar acordul poate
           fi retras oricând din „Setări cookies”.
@@ -111,8 +114,8 @@ export default function ConfidentialitatePage() {
         </li>
         <li>Google Ireland Limited / Google LLC — Google Analytics 4, doar cu acordul tău;</li>
         <li>
-          TikTok Technology Limited (Irlanda) — TikTok Pixel, măsurarea eficienței reclamelor și retargeting, doar
-          cu acordul tău pentru marketing;
+          TikTok Technology Limited (Irlanda) — TikTok Pixel și Events API (evenimentul de plată trimis de pe
+          serverul nostru), măsurarea eficienței reclamelor și retargeting, doar cu acordul tău pentru marketing;
         </li>
         <li>
           mydashboard.ro — instrument intern de statistici și monitorizare, operat de aceeași societate ({OPERATOR.name}),

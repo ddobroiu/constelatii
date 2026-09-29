@@ -32,6 +32,23 @@ function ttq(): Ttq | undefined {
   return (window as any).ttq;
 }
 
+// tt_ttclid: id-ul de click TikTok din URL-ul unei reclame, păstrat (doar cu acord pentru
+// marketing) ca plata să-l poată trimite prin Events API (lib/tiktok-events.ts, server)
+const TTCLID_COOKIE = "tt_ttclid";
+const TIKTOK_COOKIES = ["_ttp", "_tt_enable_cookie", TTCLID_COOKIE];
+
+/** Păstrează ?ttclid= din URL 30 de zile (apelat doar cu acord pentru marketing). */
+function captureTtclid() {
+  try {
+    const ttclid = new URLSearchParams(location.search).get("ttclid");
+    if (ttclid && ttclid.length <= 500) {
+      document.cookie = `${TTCLID_COOKIE}=${encodeURIComponent(ttclid)}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+    }
+  } catch {
+    /* nu strică niciodată pagina */
+  }
+}
+
 let loaded = false;
 let revoked = false;
 let pending: [string, Record<string, unknown>][] = [];
@@ -65,6 +82,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
  */
 export function loadTikTok({ trackPage = true }: { trackPage?: boolean } = {}): boolean {
   if (typeof window === "undefined" || !marketingAccepted()) return false;
+  captureTtclid();
   if (loaded) {
     if (revoked) {
       ttq()?.grantConsent();
@@ -110,7 +128,7 @@ export function revokeTikTok() {
   }
   const host = location.hostname;
   const domains = ["", host, `.${host}`, `.${host.replace(/^www\./, "")}`];
-  for (const name of ["_ttp", "_tt_enable_cookie"]) {
+  for (const name of TIKTOK_COOKIES) {
     for (const d of domains) {
       document.cookie = `${name}=; path=/; max-age=0${d ? `; domain=${d}` : ""}`;
     }

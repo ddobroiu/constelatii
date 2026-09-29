@@ -6,6 +6,7 @@ import { isOblioConfigured, issueInvoice } from "@/lib/billing/oblio";
 import { prisma } from "@/lib/db/prisma";
 import { sendPurchaseEmail } from "@/lib/email";
 import { alerta } from "@/lib/alerts";
+import { sendTikTokPurchase } from "@/lib/tiktok-events";
 
 /**
  * Confirmarea plății, venită de la Stripe.
@@ -53,7 +54,26 @@ export async function POST(request: Request) {
 
   try {
     const result = await creditPurchase(checkoutSession.id);
-    if (result.credited) await afterCredit(checkoutSession, result.pack);
+    if (result.credited) {
+      // TikTok CompletePayment (Events API), o singura data (la prima creditare), doar cu acordul
+      // de marketing salvat in sesiune; event_id = id-ul cumpararii, ca la pixel (TikTokPurchase).
+      if (result.purchaseId) {
+        const value = (checkoutSession.amount_total ?? 0) / 100;
+        const packCode = checkoutSession.metadata?.pack || "pachet";
+        void sendTikTokPurchase({
+          eventId: result.purchaseId,
+          value,
+          currency: checkoutSession.currency ?? "ron",
+          contents: [{ content_id: packCode, content_name: packCode, quantity: 1, price: value }],
+          pageUrl: `${appUrl()}/cont`,
+          email: checkoutSession.customer_details?.email ?? checkoutSession.customer_email,
+          phone: checkoutSession.customer_details?.phone,
+          externalId: result.userId,
+          metadata: checkoutSession.metadata,
+        });
+      }
+      await afterCredit(checkoutSession, result.pack);
+    }
     return NextResponse.json({ received: true, credited: result.credited });
   } catch (err) {
     console.error("Eroare la creditarea portofelului:", err);

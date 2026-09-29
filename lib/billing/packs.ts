@@ -44,12 +44,12 @@ export async function getPack(code: string): Promise<Pack | null> {
  */
 export async function creditPurchase(
   stripeCheckoutSessionId: string,
-): Promise<{ credited: boolean; userId: string | null; pack: Pack | null }> {
+): Promise<{ credited: boolean; userId: string | null; purchaseId: string | null; pack: Pack | null }> {
   const purchase = await prisma.packPurchase.findUnique({
     where: { stripeCheckoutSessionId },
     include: { pack: true },
   });
-  if (!purchase) return { credited: false, userId: null, pack: null };
+  if (!purchase) return { credited: false, userId: null, purchaseId: null, pack: null };
 
   const updated = await prisma.packPurchase.updateMany({
     where: { stripeCheckoutSessionId, status: "pending" },
@@ -57,7 +57,7 @@ export async function creditPurchase(
   });
   if (updated.count === 0) {
     // Deja creditat la o livrare anterioară a webhook-ului.
-    return { credited: false, userId: purchase.userId, pack: toPack(purchase.pack) };
+    return { credited: false, userId: purchase.userId, purchaseId: purchase.id, pack: toPack(purchase.pack) };
   }
 
   await prisma.wallet.upsert({
@@ -66,5 +66,5 @@ export async function creditPurchase(
     update: { creditsBalance: { increment: purchase.pack.credits } },
   });
 
-  return { credited: true, userId: purchase.userId, pack: toPack(purchase.pack) };
+  return { credited: true, userId: purchase.userId, purchaseId: purchase.id, pack: toPack(purchase.pack) };
 }

@@ -6,6 +6,7 @@ import { getPack } from "@/lib/billing/packs";
 import { appUrl, getStripe, stripeConfigured } from "@/lib/stripe/client";
 import { CONSENT_COOKIE, parseConsent, readCookieHeader } from "@/lib/consent";
 import { LEGAL_VERSION } from "@/lib/legal";
+import { clientIp, tiktokCheckoutMetadata } from "@/lib/tiktok-events";
 
 // `consent`: bifa obligatorie de pe /pachete (furnizare imediata + pierderea dreptului de retragere,
 // OUG 34/2014 art. 16 lit. a si m). Fara ea nu pornim plata.
@@ -64,6 +65,23 @@ export async function POST(request: Request) {
   const vid = cookieConsent?.analytics ? readCookie(request, "_md_vid") : null;
   const tag = { project: "constelatii", ...(vid && { md_vid: vid }) };
   const legal = { consent_at: consentAt.toISOString(), terms_version: LEGAL_VERSION };
+  // TikTok Events API (lib/tiktok-events.ts): acordul + _ttp/ttclid/IP/UA, doar cu acord de marketing
+  const rawCookie = (name: string): string | undefined => {
+    const raw = readCookieHeader(request.headers.get("cookie"), name);
+    if (!raw) return undefined;
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  };
+  const tiktok = tiktokCheckoutMetadata({
+    marketing: cookieConsent?.marketing === true,
+    ttp: rawCookie("_ttp"),
+    ttclid: rawCookie("tt_ttclid"),
+    ip: clientIp(request.headers),
+    userAgent: request.headers.get("user-agent"),
+  });
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "payment",
     customer_email: session.user.email ?? undefined,
@@ -87,7 +105,7 @@ export async function POST(request: Request) {
         },
       },
     ],
-    metadata: { ...tag, ...legal, userId: session.user.id, pack: pack.code },
+    metadata: { ...tag, ...legal, userId: session.user.id, pack: pack.code, ...tiktok },
     success_url: `${appUrl()}/cont?plata=succes&sid={CHECKOUT_SESSION_ID}`,
     cancel_url: `${appUrl()}/pachete?plata=anulata`,
   });
