@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/anxietate-stima-de-sine" },
-  title: "Anxietate și stimă de sine — originea sistemică | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/anxietate-stima-de-sine",
+  title: "Anxietate și stimă de sine: originea sistemică",
   description:
     "Anxietatea cronică și stima de sine scăzută nu apar mereu din nimic — uneori sunt un rol moștenit din familie. Descoperă originea printr-o constelație interpretată de AI.",
-};
+});
 
 export default function AnxietateStimaDeSinePage() {
   return (
@@ -59,10 +59,6 @@ export default function AnxietateStimaDeSinePage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "anxietate-stima-de-sine").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

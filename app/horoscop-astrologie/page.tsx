@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/horoscop-astrologie" },
-  title: "Horoscop și astrologie — harta natală integrată în constelația ta | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/horoscop-astrologie",
+  title: "Horoscop și astrologie: harta natală",
   description:
     "Nu un horoscop generic de tabloid, ci o hartă natală calculată real (planete, case, aspecte) integrată organic în interpretarea constelației tale familiale. Auto-cunoaștere, nu predicție.",
-};
+});
 
 export default function HoroscopAstrologiePage() {
   return (
@@ -59,10 +59,6 @@ export default function HoroscopAstrologiePage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "horoscop-astrologie").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

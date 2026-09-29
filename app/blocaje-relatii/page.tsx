@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/blocaje-relatii" },
-  title: "Blocaje în relații — de unde vin și cum le înțelegi | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/blocaje-relatii",
+  title: "Blocaje în relații: de unde vin",
   description:
     "Tipare care se repetă în relații — cu partenerul, cu părinții, cu prietenii — explicate prin metoda constelațiilor familiale. Descoperă originea blocajului tău printr-o constelație interactivă, interpretată de AI.",
-};
+});
 
 export default function BlocajeRelatiiPage() {
   return (
@@ -59,10 +59,6 @@ export default function BlocajeRelatiiPage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "blocaje-relatii").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { PILLARS } from "@/lib/seo/pillars";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/articole" },
-  title: "Articole — Constelații Familiale, Astrologie, Blocaje | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/articole",
+  title: "Articole: constelații, astrologie, blocaje",
   description:
     "Ghiduri despre constelații familiale, blocaje în relații și bani, astrologie și autocunoaștere — explicate clar, pornind de la metoda lui Bert Hellinger.",
-};
+});
 
 export default function ArticolePage() {
   return (

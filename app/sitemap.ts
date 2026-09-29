@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
-import { COUNTIES } from "@/lib/seo/counties";
 import { PILLARS } from "@/lib/seo/pillars";
 import { SITE_URL as BASE_URL } from "@/lib/site";
 
+// Doar paginile indexabile. Paginile pe județe (/constelatii-familiale/*) sunt
+// noindex și lipsesc intenționat (vezi lib/seo/counties.ts), la fel contul,
+// autentificarea și înregistrarea. Fără lastModified: nu avem o dată reală de
+// modificare pe pagină, iar new Date() la fiecare cerere ar fi fals.
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["/", "/chestionar", "/harta", "/articole", "/pachete", "/contact", "/termeni-si-conditii", "/politica-de-confidentialitate", "/politica-cookies"].map((path) => ({
     url: `${BASE_URL}${path}`,
@@ -16,11 +19,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const countyRoutes = COUNTIES.map((c) => ({
-    url: `${BASE_URL}/constelatii-familiale/${c.slug}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  return [...staticRoutes, ...pillarRoutes, ...countyRoutes];
+  return [...staticRoutes, ...pillarRoutes];
 }

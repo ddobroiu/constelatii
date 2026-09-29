@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/de-ce-nu-atrag-bani" },
-  title: "De ce nu atrag bani — blocajul de a primi | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/de-ce-nu-atrag-bani",
+  title: "De ce nu atrag bani: blocajul de a primi",
   description:
     "Muncești mult, faci „tot ce trebuie” și tot nu vine — de ce? De multe ori nu e o problemă de efort, ci un blocaj sistemic pe partea de a primi. Descoperă-l printr-o constelație interpretată de AI.",
-};
+});
 
 export default function DeCeNuAtragBaniPage() {
   return (
@@ -53,10 +53,6 @@ export default function DeCeNuAtragBaniPage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "de-ce-nu-atrag-bani").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

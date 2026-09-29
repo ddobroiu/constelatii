@@ -29,8 +29,28 @@ export default function ArticlePage({
   relatedLinks,
   relatedLinksTitle,
 }: ArticlePageProps) {
+  // FAQPage doar cu întrebările afișate mai jos, textul identic cu cel vizibil.
+  const faqJsonLd =
+    faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faq.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: { "@type": "Answer", text: item.answer },
+          })),
+        }
+      : null;
+
   return (
     <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6 py-16">
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }}
+        />
+      )}
       <article className="relative z-10 flex w-full max-w-2xl flex-col gap-10">
         <header className="flex flex-col items-center gap-3 text-center">
           <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm tracking-wide text-accent">

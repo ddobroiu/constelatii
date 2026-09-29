@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import LegalPage, { A, H2, UL } from "@/components/legal/LegalPage";
 import { CookieSettingsLink } from "@/components/layout/CookieConsent";
 import { LEGAL_LINKS, OPERATOR, SITE_NAME } from "@/lib/legal";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/politica-cookies" },
-  title: `Politica de cookies — ${SITE_NAME}`,
-  description: `Ce cookies și ce date locale folosește ${SITE_NAME} și cum îți poți schimba alegerea.`,
-};
+export const metadata: Metadata = pageMetadata({
+  path: "/politica-cookies",
+  title: "Politica de cookies",
+  description:
+    `Ce cookies și ce date locale folosește ${SITE_NAME} și cum îți poți schimba alegerea.`,
+});
 
 const ROWS: { name: string; category: string; provider: string; purpose: string; duration: string }[] = [
   {

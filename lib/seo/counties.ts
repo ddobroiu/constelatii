@@ -1,9 +1,12 @@
 /**
  * The 41 Romanian județe + București, with county seat and official
- * development region — verified against localitati.dev (2026). Used to
- * generate genuinely fact-grounded per-county SEO pages (not just a
- * find-and-replace template) since the service itself has no local/physical
- * presence to describe.
+ * development region — verified against localitati.dev (2026).
+ *
+ * The service is 100% online and has no per-county data (no local
+ * facilitators, sessions or events), so the county pages are the same text
+ * with only the county facts swapped. They stay reachable for visitors but are
+ * noindex and out of the sitemap, and the pillar pages no longer link to them.
+ * Make them indexable again only once a county has real local content.
  */
 
 export type DevelopmentRegion =
@@ -79,13 +82,6 @@ export function administrativeUnitPhrase(county: County): string {
 
 export function getCountyBySlug(slug: string): County | undefined {
   return COUNTIES.find((c) => c.slug === slug);
-}
-
-/** A handful of the most-searched counties, for cross-linking from the pillar pages. */
-export const FEATURED_COUNTY_SLUGS = ["bucuresti", "cluj", "timis", "iasi", "constanta", "brasov"];
-
-export function featuredCounties(): County[] {
-  return FEATURED_COUNTY_SLUGS.map((slug) => getCountyBySlug(slug)).filter((c): c is County => Boolean(c));
 }
 
 /** Other counties in the same development region — used for genuine internal linking, not filler. */

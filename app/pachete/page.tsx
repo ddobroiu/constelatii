@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { listPacks } from "@/lib/billing/packs";
 import BuyPackButton from "@/components/pachete/BuyPackButton";
 import CheckoutConsent from "@/components/pachete/CheckoutConsent";
 import TikTokViewContent from "@/components/pachete/TikTokViewContent";
 import { PRICE_NOTE } from "@/lib/legal";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/pachete" },
-  title: "Pachete de credite — Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/pachete",
+  title: "Pachete de credite",
   description:
     "Un credit deblochează raportul complet al oricărei constelații. Pachetele nu expiră — le folosești când vrei, pe orice temă.",
-};
+});
 
 const lei = new Intl.NumberFormat("ro-RO", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 

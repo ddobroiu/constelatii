@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/pierderi-doliu-familie" },
-  title: "Pierderi și doliu în familie | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/pierderi-doliu-familie",
+  title: "Pierderi și doliu în familie",
   description:
     "O sarcină pierdută, un frate mort înainte să te naști, un membru exclus din familie — ce se întâmplă cu durerea nespusă și cum arată o constelație pentru asta.",
-};
+});
 
 export default function PierderiDoliuFamiliePage() {
   return (
@@ -59,10 +59,6 @@ export default function PierderiDoliuFamiliePage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "pierderi-doliu-familie").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

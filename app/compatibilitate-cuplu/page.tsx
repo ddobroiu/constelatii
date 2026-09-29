@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/compatibilitate-cuplu" },
-  title: "Compatibilitate în cuplu — dincolo de zodie | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/compatibilitate-cuplu",
+  title: "Compatibilitate în cuplu, dincolo de zodie",
   description:
     "De ce te atrag mereu aceleași tipuri de persoane și ce spune, de fapt, compatibilitatea astrologică. Sinastrie + constelații familiale, într-o interpretare AI personalizată.",
-};
+});
 
 export default function CompatibilitateCuplulPage() {
   return (
@@ -59,10 +59,6 @@ export default function CompatibilitateCuplulPage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "compatibilitate-cuplu").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

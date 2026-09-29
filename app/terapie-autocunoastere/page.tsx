@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  title: "Terapie și autocunoaștere prin constelații familiale | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/terapie-autocunoastere",
+  title: "Terapie și autocunoaștere",
   description:
     "Un instrument de auto-reflecție bazat pe metoda constelațiilor familiale (Bert Hellinger), gândit ca punct de plecare pentru terapie sau pentru discuția cu un terapeut, nu ca înlocuitor al ei. Explorează-ți tiparele printr-o constelație interactivă interpretată de AI.",
-};
+});
 
 export default function TerapieAutocunoasterePage() {
   return (
@@ -56,10 +57,6 @@ export default function TerapieAutocunoasterePage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "terapie-autocunoastere").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

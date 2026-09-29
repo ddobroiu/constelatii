@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import LegalPage, { A, H2, UL } from "@/components/legal/LegalPage";
 import {
   ANPC_SAL_URL,
@@ -11,11 +12,12 @@ import {
   SITE_NAME,
 } from "@/lib/legal";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/termeni-si-conditii" },
-  title: `Termeni și condiții — ${SITE_NAME}`,
-  description: `Termenii și condițiile de utilizare a serviciului ${SITE_NAME} (${SITE_DOMAIN}).`,
-};
+export const metadata: Metadata = pageMetadata({
+  path: "/termeni-si-conditii",
+  title: "Termeni și condiții",
+  description:
+    `Termenii și condițiile de utilizare a serviciului ${SITE_NAME} (${SITE_DOMAIN}).`,
+});
 
 export default function TermeniPage() {
   return (

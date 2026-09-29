@@ -22,9 +22,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Constelații Familiale",
+  title: { default: "Constelații Familiale", template: "%s | Constelații Familiale" },
   description:
     "Descoperă dinamica relațiilor tale de familie printr-o constelație interactivă, interpretată cu ajutorul astrologiei și al inteligenței artificiale.",
+  openGraph: { type: "website", locale: "ro_RO", siteName: "Constelații Familiale" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { H2, A } from "@/components/legal/LegalPage";
 import { ANPC_SAL_URL, ANPC_URL, OPERATOR, OPERATOR_ADDRESS_LINE, SITE_NAME } from "@/lib/legal";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/contact" },
-  title: `Contact — ${SITE_NAME}`,
-  description: `Date de contact și de identificare ale operatorului ${SITE_NAME}.`,
-};
+export const metadata: Metadata = pageMetadata({
+  path: "/contact",
+  title: "Contact",
+  description:
+    `Date de contact și de identificare ale operatorului ${SITE_NAME}.`,
+});
 
 export default function ContactPage() {
   return (

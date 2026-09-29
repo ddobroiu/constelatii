@@ -1,11 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PILLARS } from "@/lib/seo/pillars";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 // Adresa canonica a paginii principale (absoluta prin metadataBase din layout).
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = pageMetadata({
+  path: "/",
+  title: "Constelații familiale online, cu interpretare AI",
+  absoluteTitle: true,
+  description:
+    "Așază-ți familia pe o tablă interactivă — distanță, apropiere, direcție — și primește o interpretare a constelației tale familiale, îmbogățită cu harta natală. Interpretarea inițială e gratuită.",
+});
 
 export default function Home() {
   return (

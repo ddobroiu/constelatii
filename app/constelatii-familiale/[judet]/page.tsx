@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { COUNTIES, getCountyBySlug, neighborCounties } from "@/lib/seo/counties";
 import { buildCountyContent } from "@/lib/seo/countyContent";
@@ -18,11 +19,14 @@ export async function generateMetadata({
   const county = getCountyBySlug(judet);
   if (!county) return {};
 
-  return {
-    alternates: { canonical: `/constelatii-familiale/${county.slug}` },
-    title: `Constelații Familiale Online — ${county.name} | Interpretare AI`,
+  // Fără date reale pe județ (serviciul e doar online): noindex și în afara
+  // sitemap-ului — vezi comentariul din lib/seo/counties.ts.
+  return pageMetadata({
+    path: `/constelatii-familiale/${county.slug}`,
+    title: `Constelații familiale online, ${county.name}`,
     description: `Constelație familială interactivă, disponibilă online pentru locuitorii din ${county.name} (${county.seat}). Chestionar ghidat, tablă interactivă, interpretare AI — gratuit pentru început.`,
-  };
+    noindex: true,
+  });
 }
 
 export default async function CountyPage({ params }: { params: Promise<{ judet: string }> }) {

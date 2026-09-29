@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/blocaje-parinti-copii" },
-  title: "Blocaje părinți-copii — ordinea iubirii | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/blocaje-parinti-copii",
+  title: "Blocaje părinți-copii: ordinea iubirii",
   description:
     "De ce copiii poartă, fără să știe, poveri care nu le aparțin — și cum arată o relație părinte-copil dezechilibrată. Constelații familiale explicate, cu interpretare AI.",
-};
+});
 
 export default function BlocajeParintiCopiiPage() {
   return (
@@ -59,10 +59,6 @@ export default function BlocajeParintiCopiiPage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "blocaje-parinti-copii").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );

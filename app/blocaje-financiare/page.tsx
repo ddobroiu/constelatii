@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import ArticlePage from "@/components/seo/ArticlePage";
 import { PILLARS } from "@/lib/seo/pillars";
-import { featuredCounties } from "@/lib/seo/counties";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/blocaje-financiare" },
-  title: "Blocaje financiare — rădăcini familiale ale relației cu banii | Constelații Familiale",
+export const metadata: Metadata = pageMetadata({
+  path: "/blocaje-financiare",
+  title: "Blocaje financiare: rădăcini familiale",
   description:
     "De ce muncești mult și banii tot nu rămân, de ce ceri mai puțin decât meriți sau de ce bogăția te sperie — tiparele financiare au adesea origine familială. Explorează-le printr-o constelație interactivă interpretată de AI.",
-};
+});
 
 export default function BlocajeFinanciarePage() {
   return (
@@ -54,10 +54,6 @@ export default function BlocajeFinanciarePage() {
       ]}
       relatedLinks={[
         ...PILLARS.filter((p) => p.slug !== "blocaje-financiare").map((p) => ({ href: `/${p.slug}`, label: p.label })),
-        ...featuredCounties().map((c) => ({
-          href: `/constelatii-familiale/${c.slug}`,
-          label: `Constelații în ${c.name}`,
-        })),
       ]}
     />
   );
