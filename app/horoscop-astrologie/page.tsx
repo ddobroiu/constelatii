@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/horoscop-astrologie" },
   title: "Horoscop și astrologie — harta natală integrată în constelația ta | Constelații Familiale",
   description:
     "Nu un horoscop generic de tabloid, ci o hartă natală calculată real (planete, case, aspecte) integrată organic în interpretarea constelației tale familiale. Auto-cunoaștere, nu predicție.",

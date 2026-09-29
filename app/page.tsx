@@ -1,5 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PILLARS } from "@/lib/seo/pillars";
+
+// Adresa canonica a paginii principale (absoluta prin metadataBase din layout).
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

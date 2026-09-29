@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PILLARS } from "@/lib/seo/pillars";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/articole" },
   title: "Articole — Constelații Familiale, Astrologie, Blocaje | Constelații Familiale",
   description:
     "Ghiduri despre constelații familiale, blocaje în relații și bani, astrologie și autocunoaștere — explicate clar, pornind de la metoda lui Bert Hellinger.",

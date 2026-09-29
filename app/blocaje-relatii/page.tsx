@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blocaje-relatii" },
   title: "Blocaje în relații — de unde vin și cum le înțelegi | Constelații Familiale",
   description:
     "Tipare care se repetă în relații — cu partenerul, cu părinții, cu prietenii — explicate prin metoda constelațiilor familiale. Descoperă originea blocajului tău printr-o constelație interactivă, interpretată de AI.",

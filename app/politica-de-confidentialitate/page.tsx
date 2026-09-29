@@ -3,6 +3,7 @@ import LegalPage, { A, H2, UL } from "@/components/legal/LegalPage";
 import { LEGAL_LINKS, OPERATOR, OPERATOR_ADDRESS_LINE, SITE_DOMAIN, SITE_NAME } from "@/lib/legal";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/politica-de-confidentialitate" },
   title: `Politica de confidențialitate — ${SITE_NAME}`,
   description: `Cum prelucrează ${OPERATOR.name} datele personale ale utilizatorilor ${SITE_DOMAIN}.`,
 };

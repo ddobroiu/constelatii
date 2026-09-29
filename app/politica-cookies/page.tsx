@@ -4,6 +4,7 @@ import { CookieSettingsLink } from "@/components/layout/CookieConsent";
 import { LEGAL_LINKS, OPERATOR, SITE_NAME } from "@/lib/legal";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/politica-cookies" },
   title: `Politica de cookies — ${SITE_NAME}`,
   description: `Ce cookies și ce date locale folosește ${SITE_NAME} și cum îți poți schimba alegerea.`,
 };

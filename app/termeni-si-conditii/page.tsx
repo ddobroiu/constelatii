@@ -12,6 +12,7 @@ import {
 } from "@/lib/legal";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/termeni-si-conditii" },
   title: `Termeni și condiții — ${SITE_NAME}`,
   description: `Termenii și condițiile de utilizare a serviciului ${SITE_NAME} (${SITE_DOMAIN}).`,
 };

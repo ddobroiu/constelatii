@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/meditatie" },
   title: "Meditație și practică interioară | Constelații Familiale",
   description:
     "O constelație familială e, în esență, o formă de meditație activă — te pregătești, te retragi din zgomotul de zi cu zi și observi ce simți, nu ce gândești. Cum să te pregătești pentru o practică reală.",

@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/pierderi-doliu-familie" },
   title: "Pierderi și doliu în familie | Constelații Familiale",
   description:
     "O sarcină pierdută, un frate mort înainte să te naști, un membru exclus din familie — ce se întâmplă cu durerea nespusă și cum arată o constelație pentru asta.",

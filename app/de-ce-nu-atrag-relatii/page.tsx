@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/de-ce-nu-atrag-relatii" },
   title: "De ce nu atrag relații — când pur și simplu nu se întâmplă | Constelații Familiale",
   description:
     "Nu vorbim despre relații care se repetă greșit, ci despre relații care nu apar deloc. Descoperă originea sistemică a acestui gol printr-o constelație interpretată de AI.",

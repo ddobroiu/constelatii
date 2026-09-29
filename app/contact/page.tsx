@@ -3,6 +3,7 @@ import { H2, A } from "@/components/legal/LegalPage";
 import { ANPC_SAL_URL, ANPC_URL, OPERATOR, OPERATOR_ADDRESS_LINE, SITE_NAME } from "@/lib/legal";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: `Contact — ${SITE_NAME}`,
   description: `Date de contact și de identificare ale operatorului ${SITE_NAME}.`,
 };

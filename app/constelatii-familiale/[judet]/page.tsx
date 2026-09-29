@@ -19,6 +19,7 @@ export async function generateMetadata({
   if (!county) return {};
 
   return {
+    alternates: { canonical: `/constelatii-familiale/${county.slug}` },
     title: `Constelații Familiale Online — ${county.name} | Interpretare AI`,
     description: `Constelație familială interactivă, disponibilă online pentru locuitorii din ${county.name} (${county.seat}). Chestionar ghidat, tablă interactivă, interpretare AI — gratuit pentru început.`,
   };

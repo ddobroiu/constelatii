@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/anxietate-stima-de-sine" },
   title: "Anxietate și stimă de sine — originea sistemică | Constelații Familiale",
   description:
     "Anxietatea cronică și stima de sine scăzută nu apar mereu din nimic — uneori sunt un rol moștenit din familie. Descoperă originea printr-o constelație interpretată de AI.",

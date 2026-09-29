@@ -6,6 +6,7 @@ import TikTokViewContent from "@/components/pachete/TikTokViewContent";
 import { PRICE_NOTE } from "@/lib/legal";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/pachete" },
   title: "Pachete de credite — Constelații Familiale",
   description:
     "Un credit deblochează raportul complet al oricărei constelații. Pachetele nu expiră — le folosești când vrei, pe orice temă.",

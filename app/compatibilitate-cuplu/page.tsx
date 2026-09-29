@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/compatibilitate-cuplu" },
   title: "Compatibilitate în cuplu — dincolo de zodie | Constelații Familiale",
   description:
     "De ce te atrag mereu aceleași tipuri de persoane și ce spune, de fapt, compatibilitatea astrologică. Sinastrie + constelații familiale, într-o interpretare AI personalizată.",

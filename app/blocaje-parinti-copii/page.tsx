@@ -4,6 +4,7 @@ import { PILLARS } from "@/lib/seo/pillars";
 import { featuredCounties } from "@/lib/seo/counties";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blocaje-parinti-copii" },
   title: "Blocaje părinți-copii — ordinea iubirii | Constelații Familiale",
   description:
     "De ce copiii poartă, fără să știe, poveri care nu le aparțin — și cum arată o relație părinte-copil dezechilibrată. Constelații familiale explicate, cu interpretare AI.",
