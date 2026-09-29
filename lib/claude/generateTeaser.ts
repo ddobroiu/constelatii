@@ -1,10 +1,13 @@
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./client";
+import { reportAiError, reportAnthropic } from "@/lib/ai-usage";
 import { SYSTEM_PROMPT, buildUserContent } from "./promptBuilder";
 import { TeaserSchema, type Teaser } from "./schema";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
 import type { NatalChart } from "@/lib/astrology/types";
+
+const MODEL = "claude-sonnet-5";
 
 interface GenerateTeaserInput {
   board: BoardConfig;
@@ -24,7 +27,7 @@ export async function generateTeaser({ board, questionnaire, natalChart }: Gener
   const userContent = buildUserContent({ board, questionnaire, natalChart });
 
   const stream = anthropic.messages.stream({
-    model: "claude-sonnet-5",
+    model: MODEL,
     max_tokens: 4000,
     system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
     messages: [
@@ -39,7 +42,14 @@ export async function generateTeaser({ board, questionnaire, natalChart }: Gener
     },
   });
 
-  const message = await stream.finalMessage();
+  let message;
+  try {
+    message = await stream.finalMessage();
+  } catch (err) {
+    reportAiError("anthropic", MODEL, "teaser", err);
+    throw err;
+  }
+  reportAnthropic("teaser", message.model ?? MODEL, message.usage);
 
   if (message.stop_reason === "refusal") {
     throw new Error("Claude a refuzat cererea de interpretare.");

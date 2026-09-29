@@ -1,10 +1,13 @@
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./client";
+import { reportAiError, reportAnthropic } from "@/lib/ai-usage";
 import { SYSTEM_PROMPT, buildUserContent } from "./promptBuilder";
 import { FullReportSchema, type FullReport } from "./schema";
 import type { BoardConfig } from "@/lib/board/types";
 import type { QuestionnaireAnswers } from "@/lib/questionnaire/schema";
 import type { NatalChart } from "@/lib/astrology/types";
+
+const MODEL = "claude-opus-5";
 
 interface GenerateFullReportInput {
   board: BoardConfig;
@@ -26,7 +29,7 @@ export async function generateFullReport({
   const userContent = buildUserContent({ board, questionnaire, natalChart });
 
   const stream = anthropic.messages.stream({
-    model: "claude-opus-5",
+    model: MODEL,
     max_tokens: 32000,
     system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
     messages: [
@@ -41,7 +44,14 @@ export async function generateFullReport({
     },
   });
 
-  const message = await stream.finalMessage();
+  let message;
+  try {
+    message = await stream.finalMessage();
+  } catch (err) {
+    reportAiError("anthropic", MODEL, "raport", err);
+    throw err;
+  }
+  reportAnthropic("raport", message.model ?? MODEL, message.usage);
 
   if (message.stop_reason === "refusal") {
     throw new Error("Claude a refuzat cererea de interpretare.");
