@@ -4,8 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCheckoutConsent } from "./CheckoutConsent";
+import { trackTikTok } from "@/lib/tiktok";
 
-export default function BuyPackButton({ code, label }: { code: string; label: string }) {
+export default function BuyPackButton({
+  code,
+  label,
+  name,
+  price,
+}: {
+  code: string;
+  label: string;
+  name?: string;
+  price?: number;
+}) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -22,6 +33,12 @@ export default function BuyPackButton({ code, label }: { code: string; label: st
       return;
     }
 
+    trackTikTok("InitiateCheckout", {
+      value: price,
+      currency: "RON",
+      content_type: "product",
+      contents: [{ content_id: code, content_name: name ?? code, quantity: 1, price }],
+    });
     setLoading(true);
     setError(null);
     try {

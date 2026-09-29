@@ -65,6 +65,14 @@ export default function ConfidentialitatePage() {
           (Google Analytics 4, mydashboard.ro). Temei: consimțământul tău (art. 6 alin. (1) lit. a), exprimat în
           bannerul de cookies; fără acord aceste instrumente nu se încarcă.
         </li>
+        <li>
+          <strong>Marketing / reclame</strong> — identificatori de cookie și de browser, paginile vizitate și
+          evenimente precum vizualizarea pachetelor, începerea plății și plata finalizată (valoare, monedă,
+          identificatorul comenzii, fără nume sau e-mail), prin TikTok Pixel. Scop: măsurarea eficienței reclamelor
+          și afișarea de reclame relevante. Temei: consimțământul tău (art. 6 alin. (1) lit. a), exprimat în
+          bannerul de cookies la categoria „Marketing / reclame”; fără acord pixelul nu se încarcă, iar acordul poate
+          fi retras oricând din „Setări cookies”.
+        </li>
       </UL>
       <p>
         Furnizarea datelor contului și a datelor de facturare este necesară pentru a încheia contractul și a primi
@@ -100,6 +108,10 @@ export default function ConfidentialitatePage() {
         </li>
         <li>Google Ireland Limited / Google LLC — Google Analytics 4, doar cu acordul tău;</li>
         <li>
+          TikTok Technology Limited (Irlanda) — TikTok Pixel, măsurarea eficienței reclamelor și retargeting, doar
+          cu acordul tău pentru marketing;
+        </li>
+        <li>
           mydashboard.ro — instrument intern de statistici și monitorizare, operat de aceeași societate ({OPERATOR.name}),
           doar cu acordul tău pentru statistici; primește și alerte tehnice fără date ale clienților, în afara
           identificatorului plății.
@@ -112,7 +124,8 @@ export default function ConfidentialitatePage() {
 
       <H2>5. Transferuri în afara SEE</H2>
       <p>
-        Unii furnizori (Anthropic, Stripe, Resend, Google) sunt în SUA sau au acces din SUA. Transferurile se fac în
+        Unii furnizori (Anthropic, Stripe, Resend, Google, TikTok) sunt în SUA sau în alte țări din afara SEE ori
+        au acces de acolo. Transferurile se fac în
         baza deciziei de adecvare pentru Cadrul UE-SUA privind protecția datelor (EU-US Data Privacy Framework),
         pentru furnizorii certificați, și/sau a clauzelor contractuale standard adoptate de Comisia Europeană,
         împreună cu măsuri suplimentare (criptare în tranzit). Poți cere detalii la {OPERATOR.email}.
@@ -133,7 +146,7 @@ export default function ConfidentialitatePage() {
         </li>
         <li>Jurnale tehnice — cel mult 90 de zile, dacă nu sunt necesare pentru investigarea unui incident.</li>
         <li>
-          Cookies de statistici — conform <A href={LEGAL_LINKS.cookies}>Politicii de cookies</A>; alegerea privind
+          Cookies de statistici și de marketing — conform <A href={LEGAL_LINKS.cookies}>Politicii de cookies</A>; alegerea privind
           cookies — 6 luni.
         </li>
       </UL>

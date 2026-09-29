@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { listPacks } from "@/lib/billing/packs";
 import BuyPackButton from "@/components/pachete/BuyPackButton";
 import CheckoutConsent from "@/components/pachete/CheckoutConsent";
+import TikTokViewContent from "@/components/pachete/TikTokViewContent";
 import { PRICE_NOTE } from "@/lib/legal";
 
 export const metadata: Metadata = {
@@ -37,6 +38,16 @@ export default async function PachetePage({
           </p>
         )}
 
+        <TikTokViewContent
+          currency="RON"
+          contents={packs.map((p) => ({
+            content_id: p.code,
+            content_name: p.name,
+            quantity: 1,
+            price: p.priceCents / 100,
+          }))}
+        />
+
         <CheckoutConsent>
           <div className="grid w-full gap-4 sm:grid-cols-3">
             {packs.map((pack) => {
@@ -56,7 +67,7 @@ export default async function PachetePage({
                     </p>
                     <p className="mt-1 text-[11px] text-foreground/40">{PRICE_NOTE}</p>
                   </div>
-                  <BuyPackButton code={pack.code} label="Cumpără" />
+                  <BuyPackButton code={pack.code} label="Cumpără" name={pack.name} price={pack.priceCents / 100} />
                 </div>
               );
             })}

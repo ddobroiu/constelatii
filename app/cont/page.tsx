@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import GaPurchase from "@/components/account/GaPurchase";
+import TikTokPurchase from "@/components/account/TikTokPurchase";
 import ReferralLink from "@/components/account/ReferralLink";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -51,12 +52,20 @@ export default async function ContPage({
           </p>
         )}
         {paid && (
-          <GaPurchase
-            transactionId={paid.id}
-            value={paid.amountCents / 100}
-            currency={paid.currency.toUpperCase()}
-            pack={paid.packCode}
-          />
+          <>
+            <GaPurchase
+              transactionId={paid.id}
+              value={paid.amountCents / 100}
+              currency={paid.currency.toUpperCase()}
+              pack={paid.packCode}
+            />
+            <TikTokPurchase
+              orderId={paid.id}
+              value={paid.amountCents / 100}
+              currency={paid.currency.toUpperCase()}
+              pack={paid.packCode}
+            />
+          </>
         )}
 
         <section className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">

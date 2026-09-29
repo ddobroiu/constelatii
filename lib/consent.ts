@@ -4,11 +4,13 @@
 
 export const CONSENT_COOKIE = "cookie_consent";
 /** Crește când se schimbă categoriile — alegerile vechi se cer din nou. */
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 /** 6 luni, apoi întrebăm din nou. */
 export const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
 /** Evenimentul pe care îl emite linkul „Setări cookies” din footer. */
 export const OPEN_CONSENT_EVENT = "open-cookie-settings";
+/** Emis pe window la aplicarea/schimbarea acordului; `detail` = ConsentState. */
+export const CONSENT_CHANGE_EVENT = "cookie-consent-change";
 
 export interface ConsentState {
   v: number;

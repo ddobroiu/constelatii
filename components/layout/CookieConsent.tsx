@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  CONSENT_CHANGE_EVENT,
   CONSENT_COOKIE,
   CONSENT_MAX_AGE,
   CONSENT_VERSION,
@@ -12,6 +13,7 @@ import {
   type ConsentState,
 } from "@/lib/consent";
 import { LEGAL_LINKS } from "@/lib/legal";
+import { revokeTikTok } from "@/lib/tiktok";
 
 const GA_ID = "G-8CD8R3GESM";
 const MYDASHBOARD_SITE = "e042bf6033475cf2";
@@ -65,6 +67,8 @@ function applyConsent(state: ConsentState) {
     // mydashboard.ro: vizite, surse de trafic și legătura cu plățile
     injectScript("mydashboard-tracker", "https://mydashboard.ro/t.js", { "data-site": MYDASHBOARD_SITE });
   }
+  // TikTok Pixel (marketing) se încarcă în TikTokPixel.tsx, care ascultă acest eveniment
+  window.dispatchEvent(new CustomEvent(CONSENT_CHANGE_EVENT, { detail: state }));
 }
 
 /** La retragerea acordului: șterge ce au lăsat în urmă scripturile de statistici. */
@@ -125,6 +129,7 @@ export default function CookieConsent() {
       setCurrent(state);
       setOpen(false);
       setShowDetails(false);
+      if (!next.marketing) revokeTikTok();
       if (withdrew) {
         clearAnalyticsStorage();
         // scripturile deja încărcate nu se pot descărca: reîncărcăm pagina fără ele
@@ -153,7 +158,8 @@ export default function CookieConsent() {
         <p className="mt-2 text-foreground/70">
           Folosim cookies strict necesare pentru funcționarea site-ului (autentificare, securitate, salvarea
           alegerii tale). Cu acordul tău, folosim și cookies de statistici (Google Analytics, mydashboard.ro) ca să
-          înțelegem cum este folosit site-ul. Detalii în{" "}
+          înțelegem cum este folosit site-ul, iar de marketing (TikTok Pixel) ca să măsurăm eficiența reclamelor.
+          Detalii în{" "}
           <Link href={LEGAL_LINKS.cookies} className="text-accent underline-offset-2 hover:underline">
             Politica de cookies
           </Link>
@@ -194,9 +200,9 @@ export default function CookieConsent() {
                 className="mt-1 accent-accent"
               />
               <span>
-                <span className="font-medium text-foreground">Marketing</span>
+                <span className="font-medium text-foreground">Marketing / reclame</span>
                 <span className="block text-xs text-foreground/50">
-                  Măsurarea campaniilor publicitare Google. În prezent nu folosim pixeli de reclame.
+                  Ne permite să măsurăm eficiența reclamelor (ex. TikTok) și să vă arătăm reclame relevante.
                 </span>
               </span>
             </label>

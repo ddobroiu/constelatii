@@ -52,6 +52,21 @@ const ROWS: { name: string; category: string; provider: string; purpose: string;
       "Identificator aleator de vizitator și de vizită, sursa traficului și legătura dintre vizită și o plată (ID-ul se transmite în metadatele plății Stripe doar cu acord).",
     duration: "_md_vid: 1 an; celelalte până le ștergi",
   },
+  {
+    name: "_ttp",
+    category: "Marketing",
+    provider: "TikTok Pixel (TikTok Technology Limited, Irlanda)",
+    purpose:
+      "Măsurarea eficienței reclamelor TikTok (ce vizite și plăți provin din reclame) și retargeting. Pot exista transferuri în afara UE, în baza clauzelor contractuale standard.",
+    duration: "Aproximativ 13 luni",
+  },
+  {
+    name: "_tt_enable_cookie",
+    category: "Marketing",
+    provider: "TikTok Pixel (TikTok Technology Limited, Irlanda)",
+    purpose: "Verifică dacă browserul acceptă cookies pentru TikTok Pixel.",
+    duration: "Aproximativ 13 luni",
+  },
 ];
 
 export default function CookiesPage() {
@@ -74,9 +89,11 @@ export default function CookiesPage() {
           dacă le accepți.
         </li>
         <li>
-          <strong>Marketing</strong> — măsurarea campaniilor publicitare. În prezent nu folosim pixeli sau cookies
-          de reclame; acordul pentru această categorie controlează doar semnalele Google Consent Mode
-          (ad_storage, ad_user_data, ad_personalization).
+          <strong>Marketing / reclame</strong> — măsurarea eficienței reclamelor și afișarea de reclame relevante
+          (TikTok Pixel). Se încarcă doar dacă le accepți și niciodată pe paginile de cont, autentificare sau plată
+          (cu excepția confirmării unei plăți, când transmitem doar evenimentul de plată, fără date personale).
+          Acordul pentru această categorie controlează și semnalele Google Consent Mode (ad_storage, ad_user_data,
+          ad_personalization).
         </li>
       </UL>
 
@@ -115,8 +132,8 @@ export default function CookiesPage() {
       <p>
         Îți poți modifica sau retrage oricând consimțământul din{" "}
         <CookieSettingsLink className="text-accent underline-offset-2 hover:underline" /> (link disponibil și în
-        subsolul fiecărei pagini). La retragere, ștergem cookies de statistici setate pe domeniul nostru și
-        reîncărcăm pagina fără ele. Poți șterge cookies și din setările browserului.
+        subsolul fiecărei pagini). La retragere, ștergem cookies de statistici și de marketing (_ttp,
+        _tt_enable_cookie) setate pe domeniul nostru și reîncărcăm pagina fără ele. Poți șterge cookies și din setările browserului.
       </p>
     </LegalPage>
   );

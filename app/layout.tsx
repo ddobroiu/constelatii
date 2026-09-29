@@ -6,6 +6,7 @@ import GlobalStarfield from "@/components/layout/GlobalStarfield";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import CookieConsent from "@/components/layout/CookieConsent";
+import TikTokPixel from "@/components/layout/TikTokPixel";
 import { organizationJsonLd } from "@/lib/legal";
 import { SITE_URL } from "@/lib/site";
 
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
           <CookieConsent />
+          <TikTokPixel />
         </AuthProvider>
       </body>
     </html>

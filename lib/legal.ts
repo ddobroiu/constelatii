@@ -1,9 +1,9 @@
 // Datele operatorului și versiunea documentelor legale — o singură sursă,
 // folosită în footer, pagina de contact, paginile legale, JSON-LD și la plată.
 
-export const LEGAL_VERSION = "2026-09-26";
+export const LEGAL_VERSION = "2026-09-29";
 /** Data de intrare în vigoare, în formatul afișat pe pagini. */
-export const LEGAL_EFFECTIVE_DATE = "26.09.2026";
+export const LEGAL_EFFECTIVE_DATE = "29.09.2026";
 
 export const OPERATOR = {
   name: "CULOAREA DIN VIAȚA SA S.R.L.",
