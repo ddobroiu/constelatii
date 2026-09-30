@@ -44,6 +44,8 @@ intră în regulă), niciodată cui a bifat „Nu vreau emailuri…” sau s-a d
    înregistrarea pică.
 
 2. În `.env` pe server: `CRON_SECRET=` cu un șir aleator lung
+   și `MYDASHBOARD_STATS_TOKEN=` (HMAC-SHA256(CRON_SECRET din mydashboard, 'stats:constelatii'); le pune `_deploy/dezvoltare_env.py`) —
+   fără el, `/api/mydashboard/stats` răspunde 404 și mydashboard nu arată cifrele aplicației
    (`openssl rand -hex 32`); `RESEND_API_KEY` și `EMAIL_FROM` există deja.
    Apoi `docker compose up -d --build`.
 
