@@ -12,6 +12,6 @@ services:
         NEXT_PUBLIC_APP_URL: https://constelatii.com
     restart: unless-stopped
     ports:
-      - "3006:3000"
+      - "3002:3000"
     env_file:
       - .env
