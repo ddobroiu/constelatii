@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { generateReferralCode } from "@/lib/auth/referralCode";
 import { LEGAL_VERSION } from "@/lib/legal";
+import { sendWelcomeNow } from "@/lib/lifecycle/run";
 
 const SignupSchema = z.object({
   name: z.string().min(1).max(100),
@@ -13,6 +14,8 @@ const SignupSchema = z.object({
   ref: z.string().optional(),
   // bifa obligatorie din formular: acceptarea Termenilor (si varsta minima de 18 ani)
   acceptTerms: z.literal(true),
+  // „Nu vreau emailuri cu noutăți și sfaturi” (Legea 506/2004 art. 12), nebifat implicit
+  marketingOptOut: z.boolean().optional(),
 });
 
 export async function POST(request: Request) {
@@ -55,12 +58,19 @@ export async function POST(request: Request) {
           referredById,
           termsAcceptedAt: new Date(),
           termsVersion: LEGAL_VERSION,
+          marketingOptOut: parsed.data.marketingOptOut === true,
+          marketingChoiceAt: new Date(),
           // Portofel gol de la început — fără el, ruta de deblocare
           // (`/api/constellations/[id]/unlock`) n-ar avea ce credita.
           wallet: { create: {} },
         },
         select: { id: true, email: true, name: true },
       });
+      // Bun venit, cu primul pas; trece prin jurnalul e-mailurilor, ca
+      // cronul să nu-l mai trimită. Nu ține răspunsul în loc.
+      void sendWelcomeNow({ id: user.id, email: user.email, name: user.name }).catch((error) =>
+        console.error("[inregistrare] bun venit:", error),
+      );
       return NextResponse.json(user, { status: 201 });
     } catch (err) {
       const isReferralCodeCollision =

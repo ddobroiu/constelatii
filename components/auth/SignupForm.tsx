@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { LEGAL_LINKS } from "@/lib/legal";
+import { SIGNUP_MARKETING_NOTICE, SIGNUP_OPT_OUT_LABEL } from "@/lib/lifecycle/consent";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [marketingOptOut, setMarketingOptOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +32,7 @@ export default function SignupForm() {
       const res = await fetch("/api/auth/inregistrare", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, ref, acceptTerms }),
+        body: JSON.stringify({ name, email, password, ref, acceptTerms, marketingOptOut }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -56,7 +58,7 @@ export default function SignupForm() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1 block text-xs text-foreground/50">Nume</label>
+          <label className="mb-1 block text-xs text-foreground/50">Prenume și nume</label>
           <input
             type="text"
             value={name}
@@ -107,6 +109,17 @@ export default function SignupForm() {
             </Link>
             .
           </span>
+        </label>
+
+        <p className="text-xs leading-relaxed text-foreground/50">{SIGNUP_MARKETING_NOTICE}</p>
+        <label className="flex items-start gap-2 text-xs text-foreground/60">
+          <input
+            type="checkbox"
+            checked={marketingOptOut}
+            onChange={(e) => setMarketingOptOut(e.target.checked)}
+            className="mt-0.5 shrink-0 accent-accent"
+          />
+          <span>{SIGNUP_OPT_OUT_LABEL}</span>
         </label>
 
         {error && <p className="text-sm text-red-300/80">{error}</p>}

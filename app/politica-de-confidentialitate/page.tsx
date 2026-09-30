@@ -55,8 +55,23 @@ export default function ConfidentialitatePage() {
           evidență contabilă și fiscală (art. 6 alin. (1) lit. c; Legea contabilității nr. 82/1991, Codul fiscal).
         </li>
         <li>
-          <strong>E-mailuri tranzacționale</strong> — confirmarea plății și link-ul facturii. Temei: executarea
-          contractului. Nu trimitem newslettere sau mesaje de marketing.
+          <strong>E-mailuri tranzacționale</strong> — confirmarea plății și link-ul facturii, mesajul de bun venit
+          la crearea contului. Temei: executarea contractului.
+        </li>
+        <li>
+          <strong>E-mailuri cu pași de început, sfaturi și noutăți</strong> — trimise celor care și-au creat cont,
+          despre serviciile noastre similare: câteva mesaje în primele zile (de exemplu, cum faci prima constelație)
+          și, cel mult o dată, un mesaj după o perioadă lungă fără activitate. Folosim numele, adresa de e-mail și
+          starea contului (câte constelații ai salvat, câte rapoarte ai deblocat, câte credite ai), niciodată
+          conținutul constelațiilor; păstrăm ce e-mailuri ți-am trimis și când. Temei: Legea nr. 506/2004, art. 12
+          alin. (2) și interesul nostru legitim (art. 6 alin. (1) lit. f GDPR). Le poți refuza de la înregistrare și
+          te poți dezabona oricând, cu un click, din orice e-mail.
+        </li>
+        <li>
+          <strong>Ghidul primei constelații cerut pe e-mail fără cont</strong> — adresa de e-mail, prenumele
+          (opțional), pagina de pe care l-ai cerut, momentul și textul acordului. Îți trimitem ghidul și un singur
+          mesaj ulterior despre crearea contului. Temei: consimțământul tău (art. 6 alin. (1) lit. a GDPR), retras
+          oricând prin dezabonare.
         </li>
         <li>
           <strong>Date tehnice și de securitate</strong> — adresa IP, tipul browserului, jurnale ale serverului,
@@ -107,7 +122,7 @@ export default function ConfidentialitatePage() {
         <li>Anthropic, PBC (SUA) — generarea interpretărilor AI;</li>
         <li>Stripe Payments Europe, Ltd. (Irlanda) și afiliații Stripe (SUA) — procesarea plăților;</li>
         <li>Oblio Software SRL (România) — emiterea facturilor și transmiterea în RO e-Factura (ANAF);</li>
-        <li>Resend (Plus Five Five, Inc., SUA) — trimiterea e-mailurilor tranzacționale;</li>
+        <li>Resend (Plus Five Five, Inc., SUA) — trimiterea e-mailurilor (tranzacționale și cu sfaturi și noutăți);</li>
         <li>
           OpenStreetMap Foundation (Nominatim) — căutarea locului nașterii, doar textul căutat, fără date de
           identificare;
@@ -149,6 +164,11 @@ export default function ConfidentialitatePage() {
         </li>
         <li>
           Facturile și documentele justificative ale plăților — 10 ani, conform Legii nr. 82/1991.
+        </li>
+        <li>
+          Cererile de ghid pe e-mail (fără cont) — până la dezabonare sau la cererea ta de ștergere. Jurnalul
+          e-mailurilor trimise — cât există contul sau cererea. Adresele dezabonate rămân pe lista de dezabonări,
+          doar ca să nu mai primească nimic.
         </li>
         <li>Jurnale tehnice — cel mult 90 de zile, dacă nu sunt necesare pentru investigarea unui incident.</li>
         <li>

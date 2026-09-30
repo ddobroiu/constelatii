@@ -16,6 +16,10 @@ model User {
   // acceptarea Termenilor la inregistrare
   termsAcceptedAt DateTime? @map("terms_accepted_at")
   termsVersion    String?   @map("terms_version")
+  // „Nu vreau emailuri cu noutăți și sfaturi” (Legea 506/2004 art. 12), bifat
+  // la înregistrare sau prin dezabonare; momentul alegerii.
+  marketingOptOut   Boolean   @default(false) @map("marketing_opt_out")
+  marketingChoiceAt DateTime? @map("marketing_choice_at")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -26,6 +30,7 @@ model User {
   wallet         Wallet?
   packPurchases  PackPurchase[]
   reportUnlocks  ReportUnlock[]
+  emailLogs      EmailLog[]
 
   @@map("users")
 }
@@ -138,4 +143,70 @@ model ReportUnlock {
   constellation SavedConstellation @relation(fields: [constellationId], references: [id], onDelete: Cascade)
 
   @@map("report_unlocks")
+}
+
+/**
+ * Momentul lansării e-mailurilor de după înregistrare. Doar conturile și
+ * contactele create după el le primesc — cele vechi n-au văzut anunțul de la
+ * înregistrare. Un singur rând (id = 1), pus de migrare.
+ */
+model EmailSettings {
+  id                  Int      @id @default(1)
+  lifecycleLaunchedAt DateTime @default(now()) @map("lifecycle_launched_at")
+
+  @@map("email_settings")
+}
+
+/**
+ * Vizitatorii fără cont care au cerut ghidul primei constelații pe e-mail,
+ * cu acordul explicit bifat. `email` se păstrează cu litere mici.
+ */
+model Lead {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  name           String?
+  sourcePage     String?   @map("source_page")
+  consentAt      DateTime  @map("consent_at")
+  consentText    String    @map("consent_text")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+
+  emailLogs EmailLog[]
+
+  @@map("leads")
+}
+
+/**
+ * Fiecare e-mail din ciclul de viață, o dată. `dedupeKey` = „adresă:fel”,
+ * unic: rezervarea dinaintea trimiterii împiedică dublurile; o trimitere
+ * eșuată își pune cheia pe NULL, ca să poată fi reîncercată. Id-ul (uuid
+ * aleator) e și cheia linkului de dezabonare.
+ */
+model EmailLog {
+  id        String   @id @default(uuid())
+  email     String
+  userId    String?  @map("user_id")
+  leadId    String?  @map("lead_id")
+  kind      String
+  dedupeKey String?  @unique @map("dedupe_key")
+  sentAt    DateTime @default(now()) @map("sent_at")
+  resendId  String?  @map("resend_id")
+  error     String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lead Lead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([email, sentAt(sort: Desc)])
+  @@index([kind, sentAt(sort: Desc)])
+  @@index([userId])
+  @@map("email_log")
+}
+
+/** Adresele care nu mai primesc e-mailurile de mai sus. Rămân și după ștergerea contului. */
+model EmailUnsubscribe {
+  email          String   @id
+  unsubscribedAt DateTime @default(now()) @map("unsubscribed_at")
+  emailLogId     String?  @map("email_log_id")
+
+  @@map("email_unsubscribes")
 }
