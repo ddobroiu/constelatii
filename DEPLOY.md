@@ -64,3 +64,16 @@ intră în regulă), niciodată cui a bifat „Nu vreau emailuri…” sau s-a d
 
    Un lot are cel mult 50 de e-mailuri, cu 600 ms între ele; restul pleacă la
    rularea următoare.
+
+## Pagina de admin (`/admin`)
+
+Conturi noi, vizitatori care au cerut ghidul, clienți plătitori (e-mail, dată,
+pachet, sumă, factură), checkout-uri neplătite, încasări azi / 7 / 30 de zile /
+total și e-mailurile din ciclul de viață pe tip (plus dezabonări). Aceleași
+cifre ca în mydashboard (`lib/stats.ts`).
+
+În `.env` pe server: `ADMIN_EMAILS=adresa@exemplu.ro` (mai multe, separate prin
+virgulă). Se intră logat cu un cont care are una dintre adrese; fără variabilă,
+`/admin` răspunde 404 pentru toți. Înregistrarea nu verifică adresa de e-mail,
+deci contul pentru adresa din `ADMIN_EMAILS` trebuie creat înainte de a seta
+variabila.

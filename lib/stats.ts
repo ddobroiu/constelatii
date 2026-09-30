@@ -6,7 +6,9 @@ import { prisma } from "@/lib/db/prisma";
  * Tabelele se citesc fără schemă în față, ca restul aplicației (schema vine din search_path-ul rolului).
  */
 
-const PERIODS: Record<string, string> = {
+export type StatsPeriod = "today" | "d7" | "d30" | "total";
+
+const PERIODS: Record<StatsPeriod, string> = {
   today: "date_trunc('day', now() at time zone 'Europe/Bucharest') at time zone 'Europe/Bucharest'",
   d7: "now() - interval '7 days'",
   d30: "now() - interval '30 days'",
@@ -26,6 +28,19 @@ type KpiRow = {
   active: number;
 };
 
+export type KpiKey = Exclude<keyof KpiRow, "period">;
+
+export type Kpi = {
+  key: KpiKey;
+  label: string;
+  unit: "count" | "money" | "percent";
+  hint?: string;
+  today: number;
+  d7: number;
+  d30: number;
+  total: number;
+};
+
 type RecentRow = {
   at: Date;
   kind: "signup" | "lead" | "purchase";
@@ -42,7 +57,8 @@ export function maskEmail(email: string): string {
   return `${user.slice(0, 1)}***@${domain}`;
 }
 
-export async function statsMydashboard() {
+/** Rândurile de KPI (azi / 7 / 30 zile / total), folosite de mydashboard și de pagina /admin. */
+export async function getKpis(): Promise<Kpi[]> {
   const parts = Object.entries(PERIODS).map(
     ([key, since]) => `
       select '${key}' as period,
@@ -63,6 +79,58 @@ export async function statsMydashboard() {
   const rows = await prisma.$queryRawUnsafe<KpiRow[]>(parts.join(" union all "));
   const kpi = Object.fromEntries(rows.map((r) => [r.period, r])) as Record<string, KpiRow>;
 
+  const row = (key: KpiKey, label: string, unit: Kpi["unit"], hint?: string): Kpi => ({
+    key,
+    label,
+    unit,
+    ...(hint && { hint }),
+    today: Number(kpi.today?.[key] ?? 0),
+    d7: Number(kpi.d7?.[key] ?? 0),
+    d30: Number(kpi.d30?.[key] ?? 0),
+    total: Number(kpi.total?.[key] ?? 0),
+  });
+
+  return [
+    row("users", "Conturi noi", "count"),
+    row("leads", "Vizitatori care au cerut ghidul", "count", "formularul de pe site, cu acord"),
+    row("emails", "E-mailuri trimise", "count", "bun venit, ziua 1/3/7, după plată, revenire, vizitatori"),
+    row("unsubscribes", "Dezabonări", "count"),
+    row("converted", "Au plătit după un e-mail", "count", "plată după primul e-mail primit; ordine în timp, nu atribuire"),
+    row("payers", "Clienți plătitori", "count"),
+    row("orders", "Pachete vândute", "count", "plăți confirmate"),
+    row("revenue", "Încasat în aplicație", "money", "aceleași plăți vin și din Stripe (project=constelatii)"),
+    row("active", "Oameni care au salvat o constelație", "count"),
+  ];
+}
+
+export type EmailKindRow = { kind: string; today: number; d7: number; d30: number; total: number; failed: number };
+
+/** E-mailurile din ciclul de viață pe tip (email_log.kind): trimise pe perioade și eșuate (total). */
+export async function emailKindCounts(): Promise<EmailKindRow[]> {
+  const rows = await prisma.$queryRawUnsafe<EmailKindRow[]>(`
+    select kind,
+      (count(*) filter (where error is null and sent_at >= ${PERIODS.today}))::int as today,
+      (count(*) filter (where error is null and sent_at >= ${PERIODS.d7}))::int as d7,
+      (count(*) filter (where error is null and sent_at >= ${PERIODS.d30}))::int as d30,
+      (count(*) filter (where error is null))::int as total,
+      (count(*) filter (where error is not null))::int as failed
+    from email_log
+    group by kind
+    order by total desc, kind
+  `);
+  return rows.map((r) => ({
+    kind: r.kind,
+    today: Number(r.today),
+    d7: Number(r.d7),
+    d30: Number(r.d30),
+    total: Number(r.total),
+    failed: Number(r.failed),
+  }));
+}
+
+export async function statsMydashboard() {
+  const kpi = await getKpis();
+
   const recent = await prisma.$queryRawUnsafe<RecentRow[]>(`
     (select created_at as at, 'signup' as kind, email, null::text as label, null::float8 as amount, null::text as status
        from users order by created_at desc limit 15)
@@ -77,32 +145,11 @@ export async function statsMydashboard() {
     limit 50
   `);
 
-  const row = (key: keyof KpiRow, label: string, unit: "count" | "money" | "percent", hint?: string) => ({
-    key,
-    label,
-    unit,
-    ...(hint && { hint }),
-    today: Number(kpi.today?.[key] ?? 0),
-    d7: Number(kpi.d7?.[key] ?? 0),
-    d30: Number(kpi.d30?.[key] ?? 0),
-    total: Number(kpi.total?.[key] ?? 0),
-  });
-
   return {
     project: "constelatii",
     generatedAt: new Date().toISOString(),
     currency: "RON",
-    kpi: [
-      row("users", "Conturi noi", "count"),
-      row("leads", "Vizitatori care au cerut ghidul", "count", "formularul de pe site, cu acord"),
-      row("emails", "E-mailuri trimise", "count", "bun venit, ziua 1/3/7, după plată, revenire, vizitatori"),
-      row("unsubscribes", "Dezabonări", "count"),
-      row("converted", "Au plătit după un e-mail", "count", "plată după primul e-mail primit; ordine în timp, nu atribuire"),
-      row("payers", "Clienți plătitori", "count"),
-      row("orders", "Pachete vândute", "count", "plăți confirmate"),
-      row("revenue", "Încasat în aplicație", "money", "aceleași plăți vin și din Stripe (project=constelatii)"),
-      row("active", "Oameni care au salvat o constelație", "count"),
-    ],
+    kpi,
     recent: recent.map((r) => ({
       at: new Date(r.at).toISOString(),
       title:
