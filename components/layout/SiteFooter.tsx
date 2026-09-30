@@ -88,7 +88,12 @@ export default function SiteFooter() {
 
       <div className="mx-auto mt-8 flex w-full max-w-5xl flex-col gap-2 border-t border-white/5 pt-6 text-xs text-foreground/40 sm:flex-row sm:justify-between">
         <p>Nu este terapie psihologică sau medicală și nu înlocuiește un specialist — este un instrument de auto-reflecție.</p>
-        <p>© {year} Constelații Familiale</p>
+        <p>
+          © {year} Constelații Familiale · Realizat de{" "}
+          <a href="https://e-web.ro" target="_blank" rel="noopener" className="underline-offset-2 hover:underline">
+            e-web.ro
+          </a>
+        </p>
       </div>
     </footer>
   );
