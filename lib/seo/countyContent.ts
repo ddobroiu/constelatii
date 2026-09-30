@@ -14,7 +14,7 @@ const INTRO_VARIANTS: ((c: County) => string)[] = [
   (c) =>
     `Locuiești în ${administrativeUnitPhrase(c)}? Constelația familială digitală funcționează identic, indiferent unde te afli — de la ${c.seat} până în cea mai mică localitate din regiunea ${c.region}. Tot ce ai nevoie e o conexiune la internet și 15-20 de minute.`,
   (c) =>
-    `Pentru cineva din ${c.name}, accesul la o metodă terapeutică precum constelațiile familiale înseamnă, de obicei, drum până la ${c.seat} sau chiar mai departe. Varianta online elimină complet acest obstacol — participi din orice colț al județului, oricând.`,
+    `Pentru cineva din ${c.name}, accesul la un exercițiu de autocunoaștere precum constelațiile familiale înseamnă, de obicei, drum până la ${c.seat} sau chiar mai departe. Varianta online elimină complet acest obstacol — participi din orice colț al județului, oricând.`,
   (c) =>
     `Constelațiile familiale online sunt gândite exact pentru situații ca a ta, din ${c.name}: nu ai nevoie de un facilitator fizic aproape, nici de programare cu săptămâni înainte. Construiești tabla, completezi chestionarul, primești interpretarea — de acasă, din ${c.seat} sau oriunde altundeva în regiunea ${c.region}.`,
 ];

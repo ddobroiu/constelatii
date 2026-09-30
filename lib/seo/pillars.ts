@@ -53,7 +53,7 @@ export const PILLARS: Pillar[] = [
     slug: "anxietate-stima-de-sine",
     label: "Anxietate și stimă de sine",
     shortLabel: "Anxietate",
-    description: "Anxietatea „fără motiv aparent” poate fi, uneori, un rol moștenit din familie, nu doar al tău.",
+    description: "Neliniștea „fără motiv aparent” poate avea multe cauze; constelațiile propun o perspectivă: tipare din familie.",
   },
   {
     slug: "de-ce-nu-atrag-bani",

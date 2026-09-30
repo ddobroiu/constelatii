@@ -7,7 +7,7 @@ export const metadata: Metadata = pageMetadata({
   path: "/anxietate-stima-de-sine",
   title: "Anxietate și stimă de sine: originea sistemică",
   description:
-    "Anxietatea cronică și stima de sine scăzută nu apar mereu din nimic — uneori sunt un rol moștenit din familie. Descoperă originea printr-o constelație interpretată de AI.",
+    "Anxietatea și stima de sine scăzută pot avea multe cauze. Constelațiile familiale propun o perspectivă: uneori reflectă tipare din familie. Explorează-le printr-o constelație interpretată de AI, ca exercițiu de reflecție.",
 });
 
 export default function AnxietateStimaDeSinePage() {
@@ -36,7 +36,7 @@ export default function AnxietateStimaDeSinePage() {
         {
           heading: "De la înțelegere la reglare",
           body: [
-            "A vedea că neliniștea ta a fost, la origine, a altcuiva — a unui părinte, a unui sistem întreg sub presiune — are un efect de eliberare reală: nu mai trebuie dusă mai departe cu aceeași intensitate. Pentru anxietate persistentă sau afectare semnificativă a vieții de zi cu zi, o constelație digitală completează, nu înlocuiește, sprijinul unui psihoterapeut.",
+            "Pentru unii oameni, a observa că o parte din neliniștea lor seamănă cu cea a unui părinte sau a unei familii trecute prin greutăți aduce claritate și un sentiment de ușurare. Nu e un rezultat garantat și nu e un tratament. Pentru anxietate persistentă sau care îți afectează viața de zi cu zi, adresează-te unui medic sau unui psihoterapeut; constelația digitală poate fi cel mult un exercițiu de reflecție alături de acest sprijin.",
           ],
         },
       ]}

@@ -16,7 +16,7 @@ export default function TerapieAutocunoasterePage() {
       eyebrow="Terapie și autocunoaștere"
       title="Un instrument de auto-reflecție, nu un înlocuitor de terapie"
       intro={[
-        "Constelațiile familiale sunt o metodă terapeutică sistemică dezvoltată de Bert Hellinger, folosită tradițional în grup, cu reprezentanți umani pentru fiecare membru al familiei. Ideea centrală: multe tipare emoționale pe care le trăim ca adulți — anxietate, sentimentul de a nu aparține, dificultăți relaționale repetitive — au rădăcini în dinamica sistemului familial din care venim, nu doar în biografia noastră individuală.",
+        "Constelațiile familiale sunt o abordare sistemică dezvoltată de Bert Hellinger, practicată tradițional în grup, cu reprezentanți umani pentru fiecare membru al familiei. Ideea de la care pornește: unele tipare emoționale pe care le trăim ca adulți — neliniște, sentimentul de a nu aparține, dificultăți relaționale repetitive — pot fi legate și de dinamica familiei din care venim, nu doar de biografia noastră individuală. Constelația de aici e un exercițiu de autocunoaștere, nu o formă de psihoterapie și nu un tratament.",
       ]}
       sections={[
         {
