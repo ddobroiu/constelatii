@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { LEGAL_LINKS } from "@/lib/legal";
-import { SIGNUP_MARKETING_NOTICE, SIGNUP_OPT_OUT_LABEL } from "@/lib/lifecycle/consent";
+import {
+  MARKETING_CHOICE_COOKIE,
+  SIGNUP_MARKETING_NOTICE,
+  SIGNUP_OPT_OUT_LABEL,
+} from "@/lib/lifecycle/consent";
+import GoogleButton from "@/components/auth/GoogleButton";
 
-export default function SignupForm() {
+export default function SignupForm({ googleEnabled }: { googleEnabled: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const ref = searchParams.get("ref") ?? undefined;
@@ -19,6 +24,16 @@ export default function SignupForm() {
   const [marketingOptOut, setMarketingOptOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // „Continuă cu Google” pleacă din pagină; alegerea privind e-mailurile ajunge
+  // la întoarcere printr-un cookie scurt (lib/auth/google.ts).
+  useEffect(() => {
+    try {
+      document.cookie = `${MARKETING_CHOICE_COOKIE}=${marketingOptOut ? "out" : "in"}; path=/; max-age=1800; samesite=lax`;
+    } catch {
+      // cookie-uri blocate: contul prin Google nu va primi e-mailurile periodice
+    }
+  }, [marketingOptOut]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,6 +70,22 @@ export default function SignupForm() {
     <div className="w-full max-w-sm">
       <h1 className="mb-2 text-center text-2xl font-semibold">Creează cont</h1>
       {ref && <p className="mb-6 text-center text-sm text-accent">Ai fost recomandat de un prieten 🎉</p>}
+
+      {googleEnabled && (
+        <div className="mb-4 mt-4 flex flex-col gap-4">
+          <p className="text-xs leading-relaxed text-foreground/50">{SIGNUP_MARKETING_NOTICE}</p>
+          <label className="flex items-start gap-2 text-xs text-foreground/60">
+            <input
+              type="checkbox"
+              checked={marketingOptOut}
+              onChange={(e) => setMarketingOptOut(e.target.checked)}
+              className="mt-0.5 shrink-0 accent-accent"
+            />
+            <span>{SIGNUP_OPT_OUT_LABEL}</span>
+          </label>
+          <GoogleButton redirect="/cont" refCode={ref} />
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
@@ -111,16 +142,21 @@ export default function SignupForm() {
           </span>
         </label>
 
-        <p className="text-xs leading-relaxed text-foreground/50">{SIGNUP_MARKETING_NOTICE}</p>
-        <label className="flex items-start gap-2 text-xs text-foreground/60">
-          <input
-            type="checkbox"
-            checked={marketingOptOut}
-            onChange={(e) => setMarketingOptOut(e.target.checked)}
-            className="mt-0.5 shrink-0 accent-accent"
-          />
-          <span>{SIGNUP_OPT_OUT_LABEL}</span>
-        </label>
+        {/* Cu Google activ, anunțul și bifa stau deasupra, comune ambelor căi. */}
+        {!googleEnabled && (
+          <>
+            <p className="text-xs leading-relaxed text-foreground/50">{SIGNUP_MARKETING_NOTICE}</p>
+            <label className="flex items-start gap-2 text-xs text-foreground/60">
+              <input
+                type="checkbox"
+                checked={marketingOptOut}
+                onChange={(e) => setMarketingOptOut(e.target.checked)}
+                className="mt-0.5 shrink-0 accent-accent"
+              />
+              <span>{SIGNUP_OPT_OUT_LABEL}</span>
+            </label>
+          </>
+        )}
 
         {error && <p className="text-sm text-red-300/80">{error}</p>}
 

@@ -80,7 +80,9 @@ async function collectJobs(now: number): Promise<Job[]> {
   );
 
   const users = await prisma.user.findMany({
-    where: { createdAt: { gte: launchedAt }, marketingOptOut: false },
+    // marketingChoiceAt NULL: cont creat cu Google din „Autentificare”, fără să fi
+    // văzut anunțul despre e-mailuri — primește doar bun venit (trimis imediat).
+    where: { createdAt: { gte: launchedAt }, marketingOptOut: false, marketingChoiceAt: { not: null } },
     select: {
       id: true,
       email: true,

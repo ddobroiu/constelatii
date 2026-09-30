@@ -10,3 +10,11 @@ export const SIGNUP_MARKETING_NOTICE =
   "Îți trimitem pe e-mail pașii de început și, din când în când, sfaturi și noutăți despre Constelații Familiale. Te poți dezabona oricând, cu un click, din orice e-mail.";
 
 export const SIGNUP_OPT_OUT_LABEL = "Nu vreau emailuri cu noutăți și sfaturi";
+
+/**
+ * „Continuă cu Google” pleacă din pagină; alegerea de pe „Creează cont” ajunge la
+ * întoarcere printr-un cookie scurt („in” / „out”). Pe „Autentificare” se șterge:
+ * contul creat de acolo rămâne fără alegere (marketingChoiceAt NULL) și primește
+ * doar bun venit, fără e-mailurile periodice.
+ */
+export const MARKETING_CHOICE_COOKIE = "cf_mkt";

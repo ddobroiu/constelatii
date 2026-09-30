@@ -35,6 +35,15 @@ export default function ConfidentialitatePage() {
           Temei: executarea contractului (art. 6 alin. (1) lit. b GDPR).
         </li>
         <li>
+          <strong>Autentificarea cu Google (opțional)</strong> — dacă alegi „Continuă cu Google”, Google Ireland
+          Limited ne transmite, după ce îți dai acordul pe ecranul Google, numele, adresa de e-mail și confirmarea că
+          adresa e verificată. Google ne trimite și identificatorul contului Google și poza de profil, dar nu le
+          folosim și nu le păstrăm; nu primim parola ta Google și nu avem acces la alte date din contul Google.
+          Scop: crearea contului sau intrarea în contul existent cu aceeași adresă de e-mail, fără parolă separată.
+          Temei: executarea contractului (art. 6 alin. (1) lit. b GDPR). Google prelucrează autentificarea conform
+          propriei politici de confidențialitate (policies.google.com/privacy).
+        </li>
+        <li>
           <strong>Datele constelației</strong> — relația aleasă, temele bifate, textele libere pe care le scrii,
           persoanele (rolurile) așezate pe tablă, pozițiile, simbolurile și culorile alese, interpretările generate.
           Scop: generarea interpretării și, dacă ai cont, salvarea constelației și a raportului. Temei: executarea
@@ -128,6 +137,10 @@ export default function ConfidentialitatePage() {
           identificare;
         </li>
         <li>Google Ireland Limited / Google LLC — Google Analytics 4, doar cu acordul tău;</li>
+        <li>
+          Google Ireland Limited (Irlanda) — autentificarea cu contul Google („Continuă cu Google”), doar dacă o
+          alegi;
+        </li>
         <li>
           TikTok Technology Limited (Irlanda) — TikTok Pixel și Events API (evenimentul de plată trimis de pe
           serverul nostru), măsurarea eficienței reclamelor și retargeting, doar cu acordul tău pentru marketing;
