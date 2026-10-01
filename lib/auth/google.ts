@@ -3,7 +3,6 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { generateReferralCode } from "@/lib/auth/referralCode";
 import { LEGAL_VERSION } from "@/lib/legal";
-import { MARKETING_CHOICE_COOKIE } from "@/lib/lifecycle/consent";
 import { sendWelcomeNow } from "@/lib/lifecycle/run";
 
 /**
@@ -39,11 +38,6 @@ export async function findOrCreateGoogleUser(profile: { email: string; name: str
   }
 
   const jar = await cookies();
-  // Alegerea de pe „Creează cont” (cookie scris de formular): „in” / „out”. Fără ea
-  // (pornit din „Autentificare”), omul n-a văzut anunțul, deci marketingChoiceAt
-  // rămâne NULL și contul nu primește e-mailurile periodice — doar bun venit.
-  const choice = jar.get(MARKETING_CHOICE_COOKIE)?.value;
-  const chose = choice === "in" || choice === "out";
 
   let referredById: string | null = null;
   const ref = jar.get(GOOGLE_REF_COOKIE)?.value;
@@ -67,8 +61,11 @@ export async function findOrCreateGoogleUser(profile: { email: string; name: str
           // Butonul are sub el mențiunea că, continuând, accepți Termenii.
           termsAcceptedAt: new Date(),
           termsVersion: LEGAL_VERSION,
-          marketingOptOut: choice === "out",
-          marketingChoiceAt: chose ? new Date() : null,
+          // Ca la „Creează cont” cu parolă (indiferent de unde s-a pornit):
+          // marketing permis, alegerea datată acum; refuzul, din linkul de
+          // dezabonare din orice e-mail.
+          marketingOptOut: false,
+          marketingChoiceAt: new Date(),
           wallet: { create: {} },
         },
         select: { id: true, email: true, name: true },

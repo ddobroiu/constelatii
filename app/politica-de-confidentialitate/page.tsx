@@ -73,8 +73,8 @@ export default function ConfidentialitatePage() {
           și, cel mult o dată, un mesaj după o perioadă lungă fără activitate. Folosim numele, adresa de e-mail și
           starea contului (câte constelații ai salvat, câte rapoarte ai deblocat, câte credite ai), niciodată
           conținutul constelațiilor; păstrăm ce e-mailuri ți-am trimis și când. Temei: Legea nr. 506/2004, art. 12
-          alin. (2) și interesul nostru legitim (art. 6 alin. (1) lit. f GDPR). Le poți refuza de la înregistrare și
-          te poți dezabona oricând, cu un click, din orice e-mail.
+          alin. (2) și interesul nostru legitim (art. 6 alin. (1) lit. f GDPR). Te poți dezabona oricând, cu un
+          click, din orice e-mail.
         </li>
         <li>
           <strong>Ghidul primei constelații cerut pe e-mail fără cont</strong> — adresa de e-mail, prenumele

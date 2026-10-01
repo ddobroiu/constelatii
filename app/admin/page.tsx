@@ -183,8 +183,8 @@ export default async function AdminPage() {
           </tbody>
         </table>
         <p className="px-4 pt-3 text-sm text-foreground/60">
-          Dezabonări (link din e-mail): {unsubscribes} · vizitatori dezabonați: {leadUnsubs} · conturi cu „Nu vreau
-          emailuri”: {optOuts}
+          Dezabonări (link din e-mail): {unsubscribes} · vizitatori dezabonați: {leadUnsubs} · conturi care refuză
+          e-mailurile: {optOuts}
         </p>
       </Section>
 

@@ -17,7 +17,7 @@ import { loadSnapshot } from "./snapshot";
 /**
  * Cronul e-mailurilor: cine ce primește acum. Reguli, verificate la fiecare rulare:
  *   - doar conturile și vizitatorii creați după lansare (`email_settings`);
- *   - niciodată cui a bifat „Nu vreau…”, s-a dezabonat sau e pe lista de dezabonări;
+ *   - niciodată cui a refuzat (vechea bifă „Nu vreau…”), s-a dezabonat sau e pe lista de dezabonări;
  *   - fiecare fel o singură dată pe adresă (`email_log.dedupe_key`);
  *   - cel mult un e-mail la 48 de ore pe adresă, în afară de bun venit;
  *   - fiecare fel are o fereastră: după o pauză a cronului, nu pleacă „ziua 1”
@@ -80,8 +80,8 @@ async function collectJobs(now: number): Promise<Job[]> {
   );
 
   const users = await prisma.user.findMany({
-    // marketingChoiceAt NULL: cont creat cu Google din „Autentificare”, fără să fi
-    // văzut anunțul despre e-mailuri — primește doar bun venit (trimis imediat).
+    // marketingChoiceAt NULL: doar conturi Google vechi, create din „Autentificare”
+    // înainte ca orice cont nou să primească alegerea la creare — doar bun venit.
     where: { createdAt: { gte: launchedAt }, marketingOptOut: false, marketingChoiceAt: { not: null } },
     select: {
       id: true,

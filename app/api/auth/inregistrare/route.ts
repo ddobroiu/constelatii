@@ -14,8 +14,6 @@ const SignupSchema = z.object({
   ref: z.string().optional(),
   // bifa obligatorie din formular: acceptarea Termenilor (si varsta minima de 18 ani)
   acceptTerms: z.literal(true),
-  // „Nu vreau emailuri cu noutăți și sfaturi” (Legea 506/2004 art. 12), nebifat implicit
-  marketingOptOut: z.boolean().optional(),
 });
 
 export async function POST(request: Request) {
@@ -58,7 +56,10 @@ export async function POST(request: Request) {
           referredById,
           termsAcceptedAt: new Date(),
           termsVersion: LEGAL_VERSION,
-          marketingOptOut: parsed.data.marketingOptOut === true,
+          // Anunțul de pe „Creează cont” (Legea 506/2004 art. 12 alin. 2), fără
+          // bifă de refuz: marketing permis, alegerea datată acum; refuzul, din
+          // linkul de dezabonare din orice e-mail.
+          marketingOptOut: false,
           marketingChoiceAt: new Date(),
           // Portofel gol de la început — fără el, ruta de deblocare
           // (`/api/constellations/[id]/unlock`) n-ar avea ce credita.

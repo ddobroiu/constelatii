@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { safeRedirect } from "@/lib/auth/redirect";
-import { MARKETING_CHOICE_COOKIE } from "@/lib/lifecycle/consent";
 
 // Erorile cu care Auth.js se întoarce aici (?error=) după „Continuă cu Google”.
 function authErrorMessage(code: string | null): string | null {
@@ -25,16 +24,6 @@ export default function LoginForm({ googleEnabled }: { googleEnabled: boolean })
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(() => authErrorMessage(searchParams.get("error")));
   const [loading, setLoading] = useState(false);
-
-  // Contul creat cu Google de aici n-a văzut anunțul despre e-mailuri: fără
-  // alegere, primește doar bun venit (vezi lib/auth/google.ts).
-  useEffect(() => {
-    try {
-      document.cookie = `${MARKETING_CHOICE_COOKIE}=; path=/; max-age=0`;
-    } catch {
-      // cookie-uri blocate: nimic de șters
-    }
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
