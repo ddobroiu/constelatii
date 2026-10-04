@@ -6,9 +6,10 @@ import { prisma } from "@/lib/db/prisma";
  * Tabelele se citesc fără schemă în față, ca restul aplicației (schema vine din search_path-ul rolului).
  */
 
-export type StatsPeriod = "today" | "d7" | "d30" | "total";
+export type StatsPeriod = "h24" | "today" | "d7" | "d30" | "total";
 
 const PERIODS: Record<StatsPeriod, string> = {
+  h24: "now() - interval '24 hours'",
   today: "date_trunc('day', now() at time zone 'Europe/Bucharest') at time zone 'Europe/Bucharest'",
   d7: "now() - interval '7 days'",
   d30: "now() - interval '30 days'",
@@ -26,6 +27,7 @@ type KpiRow = {
   orders: number;
   revenue: number;
   active: number;
+  unbilled: number;
 };
 
 export type KpiKey = Exclude<keyof KpiRow, "period">;
@@ -35,6 +37,7 @@ export type Kpi = {
   label: string;
   unit: "count" | "money" | "percent";
   hint?: string;
+  h24: number;
   today: number;
   d7: number;
   d30: number;
@@ -45,9 +48,12 @@ type RecentRow = {
   at: Date;
   kind: "signup" | "lead" | "purchase";
   email: string;
+  name: string | null;
   label: string | null;
   amount: number | null;
   status: string | null;
+  invoice: string | null;
+  invoice_error: string | null;
 };
 
 /** „a***@gmail.com”: destul ca să recunoști un cont, fără adresa întreagă. */
@@ -74,7 +80,8 @@ export async function getKpis(): Promise<Kpi[]> {
         (select count(distinct user_id) from pack_purchases where status = 'paid' and completed_at >= ${since})::int as payers,
         (select count(*) from pack_purchases where status = 'paid' and completed_at >= ${since})::int as orders,
         (select coalesce(sum(amount_cents), 0) / 100.0 from pack_purchases where status = 'paid' and completed_at >= ${since})::float8 as revenue,
-        (select count(distinct user_id) from saved_constellations where created_at >= ${since})::int as active`,
+        (select count(distinct user_id) from saved_constellations where created_at >= ${since})::int as active,
+        (select count(*) from pack_purchases where status = 'paid' and amount_cents > 0 and invoice_number is null and completed_at >= ${since})::int as unbilled`,
   );
   const rows = await prisma.$queryRawUnsafe<KpiRow[]>(parts.join(" union all "));
   const kpi = Object.fromEntries(rows.map((r) => [r.period, r])) as Record<string, KpiRow>;
@@ -84,6 +91,7 @@ export async function getKpis(): Promise<Kpi[]> {
     label,
     unit,
     ...(hint && { hint }),
+    h24: Number(kpi.h24?.[key] ?? 0),
     today: Number(kpi.today?.[key] ?? 0),
     d7: Number(kpi.d7?.[key] ?? 0),
     d30: Number(kpi.d30?.[key] ?? 0),
@@ -99,6 +107,7 @@ export async function getKpis(): Promise<Kpi[]> {
     row("payers", "Clienți plătitori", "count"),
     row("orders", "Pachete vândute", "count", "plăți confirmate"),
     row("revenue", "Încasat în aplicație", "money", "aceleași plăți vin și din Stripe (project=constelatii)"),
+    row("unbilled", "Facturi neemise", "count", "pachete plătite fără factură Oblio (vezi /admin, Plăți); se emit manual din Oblio"),
     row("active", "Oameni care au salvat o constelație", "count"),
   ];
 }
@@ -128,17 +137,26 @@ export async function emailKindCounts(): Promise<EmailKindRow[]> {
   }));
 }
 
+/** Starea facturii pe scurt: „factura SERIE 123” / „FĂRĂ FACTURĂ: <motiv>” (null pentru plățile neconfirmate sau gratuite). */
+function facturaPeScurt(r: RecentRow): string | null {
+  if (r.kind !== "purchase" || r.status !== "paid" || !(Number(r.amount) > 0)) return null;
+  if (r.invoice) return `factura ${r.invoice}`;
+  return `FĂRĂ FACTURĂ${r.invoice_error ? `: ${String(r.invoice_error).slice(0, 60)}` : ""}`;
+}
+
 export async function statsMydashboard() {
   const kpi = await getKpis();
 
   const recent = await prisma.$queryRawUnsafe<RecentRow[]>(`
-    (select created_at as at, 'signup' as kind, email, null::text as label, null::float8 as amount, null::text as status
+    (select created_at as at, 'signup' as kind, email, null::text as name, null::text as label, null::float8 as amount, null::text as status,
+            null::text as invoice, null::text as invoice_error
        from users order by created_at desc limit 15)
     union all
-    (select created_at, 'lead', email, source_page, null, null
+    (select created_at, 'lead', email, null, source_page, null, null, null, null
        from leads order by created_at desc limit 15)
     union all
-    (select coalesce(pp.completed_at, pp.created_at), 'purchase', u.email, pk.name, pp.amount_cents / 100.0, pp.status
+    (select coalesce(pp.completed_at, pp.created_at), 'purchase', u.email, u.name, pk.name, pp.amount_cents / 100.0, pp.status,
+            nullif(trim(coalesce(pp.invoice_series, '') || ' ' || coalesce(pp.invoice_number, '')), ''), pp.invoice_error
        from pack_purchases pp join users u on u.id = pp.user_id join packs pk on pk.code = pp.pack_code
       order by coalesce(pp.completed_at, pp.created_at) desc limit 20)
     order by at desc
@@ -158,7 +176,14 @@ export async function statsMydashboard() {
           : r.kind === "lead"
             ? `Ghid cerut: ${maskEmail(r.email)}`
             : `${r.label ?? "Pachet"}: ${maskEmail(r.email)}`,
-      detail: r.kind === "lead" ? (r.label ? `de pe ${r.label}` : null) : null,
+      detail:
+        r.kind === "lead"
+          ? r.label
+            ? `de pe ${r.label}`
+            : null
+          : r.kind === "purchase"
+            ? [r.name, maskEmail(r.email), facturaPeScurt(r)].filter(Boolean).join(" · ").slice(0, 200)
+            : null,
       amount: r.amount === null ? null : Number(r.amount),
       ...(r.kind === "purchase" && r.status ? { status: r.status } : {}),
     })),
