@@ -88,7 +88,9 @@ export async function POST(request: Request) {
     // Numele, adresa si (pentru firme) CUI-ul pentru factura Oblio
     billing_address_collection: "required",
     tax_id_collection: { enabled: true },
-    payment_intent_data: { metadata: { ...tag, userId: session.user.id, pack: pack.code } },
+    payment_intent_data: { metadata: { ...tag, userId: session.user.id, pack: pack.code }, statement_descriptor_suffix: "CONSTELATI" },
+    // Contul Stripe e comun cu alte site-uri: numele site-ului pe pagina de plata
+    branding_settings: { display_name: "Constelații Familiale" },
     line_items: [
       {
         quantity: 1,
