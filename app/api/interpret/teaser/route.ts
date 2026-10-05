@@ -5,6 +5,7 @@ import { QuestionnaireAnswersSchema } from "@/lib/questionnaire/schema";
 import { NatalChartSchema } from "@/lib/astrology/types";
 import { generateTeaser } from "@/lib/claude/generateTeaser";
 import { alerta, faraCredite } from "@/lib/alerts";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 const RequestSchema = z.object({
   board: BoardConfigSchema,
@@ -15,7 +16,29 @@ const RequestSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  // Ruta e publică și cheamă Claude: limită per IP + plafon global (IP-ul din X-Forwarded-For se poate falsifica)
+  const ip = getClientIp(request);
+  const checks = [
+    () => rateLimit(`teaser:10m:${ip}`, { limit: 5, windowMs: 10 * 60_000 }),
+    () => rateLimit(`teaser:zi:${ip}`, { limit: 20, windowMs: 24 * 3600_000 }),
+    () => rateLimit("teaser:global:ora", { limit: 300, windowMs: 3600_000 }),
+  ];
+  let blocked: ReturnType<typeof rateLimit> | undefined;
+  for (const check of checks) {
+    const r = check();
+    if (!r.ok) {
+      blocked = r;
+      break;
+    }
+  }
+  if (blocked) {
+    return NextResponse.json(
+      { error: "Prea multe cereri. Încearcă din nou puțin mai târziu." },
+      { status: 429, headers: { "Retry-After": String(blocked.retryAfter) } },
+    );
+  }
+
+  const body = await request.json().catch(() => null);
   const parsed = RequestSchema.safeParse(body);
 
   if (!parsed.success && (body as { aiConsent?: unknown } | null)?.aiConsent !== true) {
