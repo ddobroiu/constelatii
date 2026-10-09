@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { LEGAL_LINKS } from "@/lib/legal";
+import { trackMeta } from "@/lib/meta-pixel";
 import { LEAD_CONSENT_TEXT } from "@/lib/lifecycle/consent";
 
 /**
@@ -114,6 +115,7 @@ export default function LeadCapture() {
         throw new Error(body.error ?? "Ceva n-a mers. Încearcă din nou.");
       }
       remember("sent");
+      trackMeta("Lead", { content_name: "newsletter" });
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ceva n-a mers. Încearcă din nou.");

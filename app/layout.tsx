@@ -8,6 +8,7 @@ import SiteFooter from "@/components/layout/SiteFooter";
 import CookieConsent from "@/components/layout/CookieConsent";
 import LeadCapture from "@/components/layout/LeadCapture";
 import TikTokPixel from "@/components/layout/TikTokPixel";
+import MetaPixel from "@/components/layout/MetaPixel";
 import { organizationJsonLd } from "@/lib/legal";
 import { SITE_URL } from "@/lib/site";
 
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {/* ghidul primei constelații pe e-mail, pentru vizitatori; o singură dată */}
           <LeadCapture />
           <TikTokPixel />
+          <MetaPixel />
         </AuthProvider>
       </body>
     </html>

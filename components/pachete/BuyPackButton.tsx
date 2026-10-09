@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCheckoutConsent } from "./CheckoutConsent";
 import { trackTikTok } from "@/lib/tiktok";
+import { trackMeta } from "@/lib/meta-pixel";
 
 export default function BuyPackButton({
   code,
@@ -39,6 +40,7 @@ export default function BuyPackButton({
       content_type: "product",
       contents: [{ content_id: code, content_name: name ?? code, quantity: 1, price }],
     });
+    trackMeta("InitiateCheckout", { value: price, currency: "RON", content_type: "product", content_ids: [code], num_items: 1 });
     setLoading(true);
     setError(null);
     try {

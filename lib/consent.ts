@@ -48,3 +48,10 @@ export function readCookieHeader(header: string | null, name: string): string | 
   }
   return null;
 }
+
+/** Pe localhost / IP-uri locale nu se încarcă niciun script de măsurare (GA4, Meta, TikTok). */
+export function isLocalHost(): boolean {
+  if (typeof location === "undefined") return false;
+  const h = location.hostname;
+  return h === "localhost" || h === "127.0.0.1" || h === "::1" || h === "[::1]" || h.endsWith(".local") || /^(10|192\.168)\./.test(h);
+}

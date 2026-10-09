@@ -2,7 +2,7 @@
 // din bannerul de cookies și niciodată pe paginile de cont, autentificare,
 // plată sau admin. Folosit doar din componente client.
 
-import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
+import { CONSENT_COOKIE, isLocalHost, parseConsent } from "@/lib/consent";
 
 export const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "DATG4B3C77U0AVP512Q0";
 
@@ -81,7 +81,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
  * /cont?plata=succes), fără page view pe o pagină exclusă.
  */
 export function loadTikTok({ trackPage = true }: { trackPage?: boolean } = {}): boolean {
-  if (typeof window === "undefined" || !marketingAccepted()) return false;
+  if (typeof window === "undefined" || isLocalHost() || !marketingAccepted()) return false;
   captureTtclid();
   if (loaded) {
     if (revoked) {

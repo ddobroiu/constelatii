@@ -8,12 +8,14 @@ import {
   CONSENT_MAX_AGE,
   CONSENT_VERSION,
   OPEN_CONSENT_EVENT,
+  isLocalHost,
   parseConsent,
   serializeConsent,
   type ConsentState,
 } from "@/lib/consent";
 import { LEGAL_LINKS } from "@/lib/legal";
 import { revokeTikTok } from "@/lib/tiktok";
+import { revokeMeta } from "@/lib/meta-pixel";
 
 const GA_ID = "G-8CD8R3GESM";
 const MYDASHBOARD_SITE = "e042bf6033475cf2";
@@ -57,7 +59,7 @@ function applyConsent(state: ConsentState) {
     ad_user_data: state.marketing ? "granted" : "denied",
     ad_personalization: state.marketing ? "granted" : "denied",
   });
-  if (state.analytics) {
+  if (state.analytics && !isLocalHost()) {
     // Google Analytics 4 (proprietatea „Constelatii.com”)
     if (!document.getElementById("ga4-gtag")) {
       gtag("js", new Date());
@@ -67,7 +69,7 @@ function applyConsent(state: ConsentState) {
     // mydashboard.ro: vizite, surse de trafic și legătura cu plățile
     injectScript("mydashboard-tracker", "https://mydashboard.ro/t.js", { "data-site": MYDASHBOARD_SITE });
   }
-  // TikTok Pixel (marketing) se încarcă în TikTokPixel.tsx, care ascultă acest eveniment
+  // Meta Pixel și TikTok Pixel (marketing) se încarcă în MetaPixel.tsx / TikTokPixel.tsx, care ascultă acest eveniment
   window.dispatchEvent(new CustomEvent(CONSENT_CHANGE_EVENT, { detail: state }));
 }
 
@@ -129,7 +131,10 @@ export default function CookieConsent() {
       setCurrent(state);
       setOpen(false);
       setShowDetails(false);
-      if (!next.marketing) revokeTikTok();
+      if (!next.marketing) {
+        revokeTikTok();
+        revokeMeta();
+      }
       if (withdrew) {
         clearAnalyticsStorage();
         // scripturile deja încărcate nu se pot descărca: reîncărcăm pagina fără ele
@@ -158,7 +163,7 @@ export default function CookieConsent() {
         <p className="mt-2 text-foreground/70">
           Folosim cookies strict necesare pentru funcționarea site-ului (autentificare, securitate, salvarea
           alegerii tale). Cu acordul tău, folosim și cookies de statistici (Google Analytics, mydashboard.ro) ca să
-          înțelegem cum este folosit site-ul, iar de marketing (TikTok Pixel) ca să măsurăm eficiența reclamelor.
+          înțelegem cum este folosit site-ul, iar de marketing (Meta Pixel, TikTok Pixel) ca să măsurăm eficiența reclamelor.
           Detalii în{" "}
           <Link href={LEGAL_LINKS.cookies} className="text-accent underline-offset-2 hover:underline">
             Politica de cookies
@@ -202,7 +207,7 @@ export default function CookieConsent() {
               <span>
                 <span className="font-medium text-foreground">Marketing / reclame</span>
                 <span className="block text-xs text-foreground/50">
-                  Ne permite să măsurăm eficiența reclamelor (ex. TikTok) și să vă arătăm reclame relevante.
+                  Ne permite să măsurăm eficiența reclamelor (ex. Meta/Facebook, Instagram, TikTok) și să vă arătăm reclame relevante.
                 </span>
               </span>
             </label>

@@ -56,6 +56,14 @@ const ROWS: { name: string; category: string; provider: string; purpose: string;
     duration: "_md_vid: 1 an; celelalte până le ștergi",
   },
   {
+    name: "_fbp, _fbc",
+    category: "Marketing",
+    provider: "Meta Pixel (Meta Platforms Ireland Ltd.)",
+    purpose:
+      "Măsurarea eficienței reclamelor Facebook/Instagram (ce vizite și plăți provin din reclame) și retargeting. Pot exista transferuri în afara UE, în baza clauzelor contractuale standard.",
+    duration: "3 luni",
+  },
+  {
     name: "_ttp",
     category: "Marketing",
     provider: "TikTok Pixel (TikTok Technology Limited, Irlanda)",
@@ -101,11 +109,11 @@ export default function CookiesPage() {
         </li>
         <li>
           <strong>Marketing / reclame</strong> — măsurarea eficienței reclamelor și afișarea de reclame relevante
-          (TikTok Pixel). Se încarcă doar dacă le accepți și niciodată pe paginile de cont, autentificare sau plată
+          (Meta Pixel, TikTok Pixel). Se încarcă doar dacă le accepți și niciodată pe paginile de cont, autentificare sau plată
           (cu excepția confirmării unei plăți, când pixelul transmite doar evenimentul de plată, fără date personale).
-          Tot doar cu acest acord, după o plată confirmată, serverul nostru trimite direct la TikTok (Events API)
+          Tot doar cu acest acord, după o plată confirmată, serverul nostru trimite direct la Meta (Conversions API) și TikTok (Events API)
           valoarea, moneda, pachetul și identificatorul comenzii, e-mailul, telefonul și identificatorul contului doar
-          ca amprentă criptografică (SHA-256), adresa IP, browserul și identificatorii _ttp / tt_ttclid; fără acord nu
+          ca amprentă criptografică (SHA-256), adresa IP, browserul și identificatorii _fbp / _fbc / _ttp / tt_ttclid; fără acord nu
           trimitem nimic.
           Acordul pentru această categorie controlează și semnalele Google Consent Mode (ad_storage, ad_user_data,
           ad_personalization).

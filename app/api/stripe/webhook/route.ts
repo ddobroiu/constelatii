@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db/prisma";
 import { sendPurchaseEmail } from "@/lib/email";
 import { alerta } from "@/lib/alerts";
 import { sendTikTokPurchase } from "@/lib/tiktok-events";
+import { sendMetaPurchase } from "@/lib/meta-capi";
 
 /**
  * Confirmarea plății, venită de la Stripe.
@@ -65,6 +66,18 @@ export async function POST(request: Request) {
           value,
           currency: checkoutSession.currency ?? "ron",
           contents: [{ content_id: packCode, content_name: packCode, quantity: 1, price: value }],
+          pageUrl: `${appUrl()}/cont`,
+          email: checkoutSession.customer_details?.email ?? checkoutSession.customer_email,
+          phone: checkoutSession.customer_details?.phone,
+          externalId: result.userId,
+          metadata: checkoutSession.metadata,
+        });
+        // Meta Purchase (Conversions API), aceleasi conditii; event_id = id-ul cumpararii (MetaPurchase)
+        void sendMetaPurchase({
+          eventId: result.purchaseId,
+          value,
+          currency: checkoutSession.currency ?? "ron",
+          contentIds: [packCode],
           pageUrl: `${appUrl()}/cont`,
           email: checkoutSession.customer_details?.email ?? checkoutSession.customer_email,
           phone: checkoutSession.customer_details?.phone,
